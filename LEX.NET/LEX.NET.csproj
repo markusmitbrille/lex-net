@@ -60,7 +60,7 @@
     <Compile Include="Serialization\ReferenceComparer.cs" />
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Singleton.cs" />
-    <Compile Include="Serialization\StreamExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

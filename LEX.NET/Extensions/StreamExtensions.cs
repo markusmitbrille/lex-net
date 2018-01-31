@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Autrage.LEX.NET.Serialization
+namespace Autrage.LEX.NET.Extensions
 {
     public static class StreamExtensions
     {
