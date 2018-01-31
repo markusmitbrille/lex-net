@@ -55,6 +55,7 @@
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Extensions\StackExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="MathUtils.cs" />
     <Compile Include="Serialization\DataContractAttribute.cs" />
     <Compile Include="Serialization\DataMemberAttribute.cs" />
     <Compile Include="Serialization\ReferenceComparer.cs" />
