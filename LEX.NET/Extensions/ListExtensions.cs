@@ -12,7 +12,7 @@ namespace Autrage.LEX.NET.Extensions
 
             if (source.Count == 0)
             {
-                return default(T);
+                return default;
             }
 
             T obj = source[0];
@@ -27,7 +27,7 @@ namespace Autrage.LEX.NET.Extensions
 
             if (source.Count == 0)
             {
-                return default(T);
+                return default;
             }
 
             T obj = source[source.Count - 1];
@@ -40,12 +40,12 @@ namespace Autrage.LEX.NET.Extensions
         {
             if (source.Count == 0)
             {
-                return default(T);
+                return default;
             }
 
             if (index < 0 || index >= source.Count)
             {
-                return default(T);
+                return default;
             }
 
             return source[index];

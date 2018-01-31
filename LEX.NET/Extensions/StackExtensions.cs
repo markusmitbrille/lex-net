@@ -21,7 +21,7 @@ namespace Autrage.LEX.NET.Extensions
         {
             stack.AssertNotNull(nameof(stack));
 
-            return stack.Count > 0 ? stack.Pop() : default(T);
+            return stack.Count > 0 ? stack.Pop() : default;
         }
 
         #endregion Methods

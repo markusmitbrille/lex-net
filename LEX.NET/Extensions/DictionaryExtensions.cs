@@ -10,8 +10,7 @@ namespace Autrage.LEX.NET.Extensions
         {
             source.AssertNotNull(nameof(source));
 
-            TValue value = default(TValue);
-            source.TryGetValue(key, out value);
+            source.TryGetValue(key, out TValue value);
             return value;
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Reflection;
 
-using static Autrage.LEX.NET.DebugUtils;
-
 namespace Autrage.LEX.NET.Extensions
 {
     public static class MemberInfoExtensions
@@ -13,58 +11,50 @@ namespace Autrage.LEX.NET.Extensions
         {
             member.AssertNotNull();
 
-            if (member.MemberType == MemberTypes.Field)
+            if (member is FieldInfo field)
             {
-                FieldInfo field = (FieldInfo)member;
                 return field.FieldType;
             }
-            else if (member.MemberType == MemberTypes.Property)
+            if (member is PropertyInfo property)
             {
-                PropertyInfo prop = (PropertyInfo)member;
-                return prop.PropertyType;
+                return property.PropertyType;
             }
 
-            Fail($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
-            return null;
+            throw new Exception($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
         }
 
         public static object GetFieldOrPropertyValue(this MemberInfo member, object obj)
         {
             member.AssertNotNull();
 
-            if (member.MemberType == MemberTypes.Field)
+            if (member is FieldInfo field)
             {
-                FieldInfo field = (FieldInfo)member;
                 return field.GetValue(obj);
             }
-            else if (member.MemberType == MemberTypes.Property)
+            if (member is PropertyInfo property)
             {
-                PropertyInfo prop = (PropertyInfo)member;
-                return prop.GetValue(obj, null);
+                return property.GetValue(obj);
             }
 
-            Fail($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
-            return null;
+            throw new Exception($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
         }
 
         public static void SetFieldOrPropertyValue(this MemberInfo member, object obj, object value)
         {
             member.AssertNotNull();
 
-            if (member.MemberType == MemberTypes.Field)
+            if (member is FieldInfo field)
             {
-                FieldInfo field = (FieldInfo)member;
                 field.SetValue(obj, value);
                 return;
             }
-            else if (member.MemberType == MemberTypes.Property)
+            if (member is PropertyInfo property)
             {
-                PropertyInfo prop = (PropertyInfo)member;
-                prop.SetValue(obj, value, null);
+                property.SetValue(obj, value);
                 return;
             }
 
-            Fail($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
+            throw new Exception($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
         }
 
         #endregion Methods

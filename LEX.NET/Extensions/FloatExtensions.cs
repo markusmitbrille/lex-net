@@ -13,9 +13,7 @@ namespace Autrage.LEX.NET.Extensions
         #region Methods
 
         public static bool IsAlmost(this float number, float other, float epsilon = FloatExtensions.epsilon)
-        {
-            return Math.Abs(number - other) < epsilon;
-        }
+            => Math.Abs(number - other) < epsilon;
 
         #endregion Methods
     }
