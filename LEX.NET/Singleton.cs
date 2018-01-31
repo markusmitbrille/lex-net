@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Autrage.LEX.NET
+﻿namespace Autrage.LEX.NET
 {
     public static class Singleton<T> where T : class, new()
     {
+        #region Fields
+
         private static T instance = null;
+
+        #endregion Fields
+
+        #region Properties
+
         public static T Instance
         {
             get
@@ -21,5 +22,7 @@ namespace Autrage.LEX.NET
                 return instance;
             }
         }
+
+        #endregion Properties
     }
 }
