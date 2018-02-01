@@ -38,17 +38,22 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
+            if (Nullable.GetUnderlyingType(expectedType) is Type underlyingType)
+            {
+                expectedType = underlyingType;
+            }
+
             object instance = Instantiate(stream, expectedType);
             if (instance == null)
             {
-                Warning($"Could not deserialize {expectedType.Name} instance, instantiation failed!");
+                Warning($"Could not deserialize {expectedType} instance, instantiation failed!");
                 return expectedType.GetDefault();
             }
 
             IEnumerable<Field> fields = DeserializeFields(stream);
             if (fields == null)
             {
-                Warning($"Could not deserialize {instance.GetType().Name} instance fields!");
+                Warning($"Could not deserialize {instance.GetType()} instance fields!");
                 return expectedType.GetDefault();
             }
 
