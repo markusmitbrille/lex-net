@@ -9,9 +9,7 @@ namespace Autrage.LEX.NET
         #region Fields
 
         public const string LogCategory = "LOG";
-
         public const string WarningCategory = "WARNING";
-
         public const string ErrorCategory = "ERROR";
 
         #endregion Fields
