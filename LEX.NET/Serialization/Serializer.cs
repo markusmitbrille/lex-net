@@ -15,10 +15,7 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Fields
 
-        private long nextReferenceID = 0;
-
-        private Dictionary<object, long> referencIDs = new Dictionary<object, long>(new ReferenceComparer());
-
+        private Dictionary<object, long> referenceIDs = new Dictionary<object, long>(new ReferenceComparer());
         private Dictionary<long, object> references = new Dictionary<long, object>();
 
         #endregion Fields
@@ -275,14 +272,14 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (referencIDs.ContainsKey(instance))
+            if (referenceIDs.ContainsKey(instance))
             {
-                stream.Write(referencIDs[instance]);
+                stream.Write(referenceIDs[instance]);
                 return true;
             }
 
-            long referenceID = nextReferenceID++;
-            referencIDs[instance] = referenceID;
+            long referenceID = referenceIDs.Max(e => e.Value) + 1;
+            referenceIDs[instance] = referenceID;
             stream.Write(referenceID);
 
             if (SerializeInstance(stream, instance))
@@ -291,7 +288,7 @@ namespace Autrage.LEX.NET.Serialization
             }
             else
             {
-                referencIDs.Remove(instance);
+                referenceIDs.Remove(instance);
                 return false;
             }
         }
