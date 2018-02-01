@@ -567,11 +567,6 @@ namespace Autrage.LEX.NET.Serialization
             throw new NotImplementedException();
         }
 
-        private object DeserializeComponent(Stream stream, Type type)
-        {
-            throw new NotImplementedException();
-        }
-
         private object DeserializeReference(Stream stream, Type expectedType)
         {
             stream.AssertNotNull();
