@@ -24,12 +24,13 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
-            if (Nullable.GetUnderlyingType(type) is Type nullableUnderlyingType)
+            Type enumUnderlyingType = type.GetEnumUnderlyingType();
+            if (enumUnderlyingType == null)
             {
-                type = nullableUnderlyingType;
+                Warning($"Could not get underlying type of enum {type}!");
+                return false;
             }
 
-            Type enumUnderlyingType = type.GetEnumUnderlyingType();
             if (enumUnderlyingType == typeof(byte))
             {
                 stream.Write((byte)instance);
@@ -94,12 +95,7 @@ namespace Autrage.LEX.NET.Serialization
             Type enumUnderlyingType = expectedType.GetEnumUnderlyingType();
             if (enumUnderlyingType == null)
             {
-                Warning($"Could not get underlying type of enum {expectedType.Name}!");
-                return expectedType.GetDefault();
-            }
-            if (!enumUnderlyingType.IsValueType)
-            {
-                Warning($"Underlying type {enumUnderlyingType.Name} of {expectedType.Name} not supported!");
+                Warning($"Could not get underlying type of enum {expectedType}!");
                 return expectedType.GetDefault();
             }
 
@@ -139,7 +135,7 @@ namespace Autrage.LEX.NET.Serialization
 
             if (instance == null)
             {
-                Warning($"Underlying type {enumUnderlyingType.Name} of {expectedType.Name} not supported!");
+                Warning($"Underlying type {enumUnderlyingType} of {expectedType} not supported!");
                 return expectedType.GetDefault();
             }
             else

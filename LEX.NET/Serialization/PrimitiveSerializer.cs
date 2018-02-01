@@ -24,11 +24,6 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
-            if (Nullable.GetUnderlyingType(type) is Type underlyingType)
-            {
-                type = underlyingType;
-            }
-
             if (type == typeof(byte))
             {
                 stream.Write((byte)instance);
@@ -171,7 +166,7 @@ namespace Autrage.LEX.NET.Serialization
 
             if (instance == null)
             {
-                Warning($"Primitive type {expectedType.Name} not supported!");
+                Warning($"Primitive type {expectedType} not supported!");
                 return expectedType.GetDefault();
             }
             else
