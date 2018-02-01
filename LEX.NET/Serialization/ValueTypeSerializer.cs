@@ -11,7 +11,7 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Methods
 
-        public override bool CanSerialize(Type type) => type.IsValueType || (Nullable.GetUnderlyingType(type)?.IsValueType ?? false);
+        public override bool CanSerialize(Type type) => type.IsValueType;
 
         public override bool Serialize(Stream stream, object instance)
         {
