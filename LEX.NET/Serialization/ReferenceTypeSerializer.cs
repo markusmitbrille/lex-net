@@ -18,7 +18,7 @@ namespace Autrage.LEX.NET.Serialization
 
         #region Methods
 
-        public override bool CanSerialize(Type type) => type.IsByRef;
+        public override bool CanSerialize(Type type) => type.IsClass;
 
         public override bool Serialize(Stream stream, object instance)
         {
