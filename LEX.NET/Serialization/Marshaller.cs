@@ -23,7 +23,7 @@ namespace Autrage.LEX.NET.Serialization
             Serialize(stream, instance, serializers);
         }
 
-        public static object Deserialize(Stream stream, Type expectedType, params Type[] serializers)
+        public static object Deserialize(Stream stream, params Type[] serializers)
         {
             IMarshaller marshaller = Serializer.CreateMarshaller();
             foreach (Type serializer in serializers)
@@ -31,12 +31,12 @@ namespace Autrage.LEX.NET.Serialization
                 marshaller.AddSerializer(serializer);
             }
 
-            return marshaller.Deserialize(stream, expectedType);
+            return marshaller.Deserialize(stream);
         }
 
         public static T Deserialize<T>(Stream stream, params Type[] serializers)
         {
-            if (Deserialize(stream, typeof(T), serializers) is T instance)
+            if (Deserialize(stream, serializers) is T instance)
             {
                 return instance;
             }

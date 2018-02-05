@@ -50,7 +50,7 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
-            stream.Write(typeName, Encoding);
+            stream.Write(typeName, Marshaller.Encoding);
 
             if (SerializeFields(stream, instance))
             {

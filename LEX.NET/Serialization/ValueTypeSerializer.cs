@@ -1,9 +1,6 @@
 ﻿using Autrage.LEX.NET.Extensions;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization;
 using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
@@ -24,15 +21,6 @@ namespace Autrage.LEX.NET.Serialization
                 Warning($"Cannot serialize type {instance.GetType()}!");
                 return false;
             }
-
-            string typeName = Cache.GetNameFrom(instance.GetType());
-            if (typeName == null)
-            {
-                Warning($"Could not serialize {instance.GetType()} instance, could not get type name!");
-                return false;
-            }
-
-            stream.Write(typeName, Encoding);
 
             return SerializeFields(stream, instance);
         }

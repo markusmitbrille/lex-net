@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 using static Autrage.LEX.NET.DebugUtils;
 
@@ -12,12 +11,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public abstract class ObjectSerializer : Serializer
     {
-        #region Properties
-
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
-
-        #endregion Properties
-
         #region Methods
 
         private protected bool SerializeFields(Stream stream, object instance)
@@ -73,7 +66,7 @@ namespace Autrage.LEX.NET.Serialization
 
         private protected Type DeserializeType(Stream stream)
         {
-            string name = stream.ReadString(Encoding);
+            string name = stream.ReadString(Marshaller.Encoding);
             if (name == null)
             {
                 Warning($"Could not deserialize type name!");
@@ -109,8 +102,8 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
-            stream.Write(fieldName, Encoding);
-            stream.Write(fieldTypeName, Encoding);
+            stream.Write(fieldName, Marshaller.Encoding);
+            stream.Write(fieldTypeName, Marshaller.Encoding);
             Serialize(stream, field.GetValue(instance));
 
             return true;
@@ -120,7 +113,7 @@ namespace Autrage.LEX.NET.Serialization
         {
             stream.AssertNotNull();
 
-            string name = stream.ReadString(Encoding);
+            string name = stream.ReadString(Marshaller.Encoding);
             if (name == null)
             {
                 Warning($"Could not deserialize field name!");
