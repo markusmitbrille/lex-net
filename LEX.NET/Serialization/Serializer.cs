@@ -135,16 +135,14 @@ namespace Autrage.LEX.NET.Serialization
 
                 using (MemoryStream payload = new MemoryStream(payloadBuffer))
                 {
-                    foreach (Serializer serializer in serializers)
+                    Serializer serializer = serializers.FirstOrDefault(s => s.CanSerialize(expectedType));
+                    if (serializer == null)
                     {
-                        if (serializer.CanSerialize(expectedType))
-                        {
-                            return serializer.Deserialize(payload, expectedType);
-                        }
+                        Warning($"Not suitable serializer specified for {expectedType}!");
+                        return expectedType.GetDefault();
                     }
 
-                    Warning($"No suitable serializer specified for {expectedType}!");
-                    return expectedType.GetDefault();
+                    return serializer.Deserialize(payload, expectedType);
                 }
             }
 
