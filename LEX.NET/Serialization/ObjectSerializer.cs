@@ -38,53 +38,6 @@ namespace Autrage.LEX.NET.Serialization
             return SerializeFields(stream, instance);
         }
 
-        private protected object Instantiate(Stream stream, Type expectedType)
-        {
-            stream.AssertNotNull();
-            expectedType.AssertNotNull();
-
-            Type type = DeserializeType(stream);
-            if (type == null)
-            {
-                Warning($"Could not create {expectedType.Name} instance, type deserialization failed!");
-                return expectedType.GetDefault();
-            }
-            if (!expectedType.IsAssignableFrom(type))
-            {
-                Warning($"Could not create {expectedType.Name} instance, type mismatch: expected {expectedType.Name}, deserialized {type.Name}!");
-                return expectedType.GetDefault();
-            }
-
-            object instance = null;
-            if (Cache.SkipConstructorOf(type))
-            {
-                instance = FormatterServices.GetSafeUninitializedObject(type);
-                if (instance == null)
-                {
-                    Warning($"Could not create {expectedType.Name} instance, constructor invokation failed!");
-                    return expectedType.GetDefault();
-                }
-            }
-            else
-            {
-                ConstructorInfo constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-                if (constructor == null)
-                {
-                    Warning($"Could not create {expectedType.Name} instance, no default constructor found!");
-                    return expectedType.GetDefault();
-                }
-
-                instance = constructor.Invoke(null);
-                if (instance == null)
-                {
-                    Warning($"Could not create {expectedType.Name} instance, constructor invokation failed!");
-                    return expectedType.GetDefault();
-                }
-            }
-
-            return instance;
-        }
-
         private protected IEnumerable<Field> DeserializeFields(Stream stream)
         {
             stream.AssertNotNull();
@@ -185,25 +138,6 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        private Type DeserializeType(Stream stream)
-        {
-            string name = stream.ReadString(Encoding);
-            if (name == null)
-            {
-                Warning($"Could not deserialize type name!");
-                return null;
-            }
-
-            Type type = Cache.GetTypeFrom(name);
-            if (type == null)
-            {
-                Warning($"Could not deserialize type {name}!");
-                return null;
-            }
-
-            return type;
-        }
-
         private Field DeserializeField(Stream stream)
         {
             stream.AssertNotNull();
@@ -225,6 +159,25 @@ namespace Autrage.LEX.NET.Serialization
             object value = Deserialize(stream, type);
 
             return new Field(name, type, value);
+        }
+
+        private protected Type DeserializeType(Stream stream)
+        {
+            string name = stream.ReadString(Encoding);
+            if (name == null)
+            {
+                Warning($"Could not deserialize type name!");
+                return null;
+            }
+
+            Type type = Cache.GetTypeFrom(name);
+            if (type == null)
+            {
+                Warning($"Could not deserialize type {name}!");
+                return null;
+            }
+
+            return type;
         }
 
         #endregion Methods
