@@ -2,7 +2,7 @@
 
 namespace Autrage.LEX.NET.Serialization
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
     public class DataContractAttribute : Attribute
     {
         #region Properties
