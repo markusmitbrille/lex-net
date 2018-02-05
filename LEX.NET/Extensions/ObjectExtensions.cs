@@ -23,14 +23,14 @@ namespace Autrage.LEX.NET.Extensions
             if (nonPublics)
                 bindingFlags |= BindingFlags.NonPublic;
 
+            Console.Write(obj);
             PrintFields(obj, bindingFlags);
         }
 
         private static void PrintFields(object obj, BindingFlags bindingFlags)
         {
-            Console.Write("Fields:");
             IEnumerable<FieldInfo> fields = obj.GetType().GetFields(bindingFlags);
-            if (fields.Count() < 10 && fields.All(f => f.FieldType.IsPrimitive || f.FieldType.IsEnum))
+            if (fields.Count() < 5 && fields.All(f => f.FieldType.IsPrimitive || f.FieldType.IsEnum))
             {
                 PrintFieldsSimple(obj, fields);
             }
@@ -42,6 +42,7 @@ namespace Autrage.LEX.NET.Extensions
 
         private static void PrintFieldsSimple(object obj, IEnumerable<FieldInfo> fields)
         {
+            Console.Write("Fields:");
             foreach (FieldInfo field in fields)
             {
                 Console.Write($" {field.Name}={field.GetValue(obj)};");
@@ -52,6 +53,7 @@ namespace Autrage.LEX.NET.Extensions
         private static void PrintFieldsComplex(object obj, IEnumerable<FieldInfo> fields)
         {
             Console.WriteLine();
+            Console.WriteLine("Fields:");
             foreach (FieldInfo field in fields)
             {
                 Console.WriteLine($"\t{field.Name}={field.GetValue(obj)};");
@@ -61,9 +63,8 @@ namespace Autrage.LEX.NET.Extensions
 
         private static void PrintProperties(object obj, BindingFlags bindingFlags)
         {
-            Console.Write("Fields:");
             IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties(bindingFlags).Where(p => p.CanRead);
-            if (properties.Count() < 10 && properties.All(p => p.PropertyType.IsPrimitive || p.PropertyType.IsEnum))
+            if (properties.Count() < 5 && properties.All(p => p.PropertyType.IsPrimitive || p.PropertyType.IsEnum))
             {
                 PrintPropertiesSimple(obj, properties);
             }
@@ -75,6 +76,7 @@ namespace Autrage.LEX.NET.Extensions
 
         private static void PrintPropertiesSimple(object obj, IEnumerable<PropertyInfo> properties)
         {
+            Console.Write("Properties:");
             foreach (PropertyInfo property in properties)
             {
                 Console.Write($" {property.Name}={property.GetValue(obj)};");
@@ -85,6 +87,7 @@ namespace Autrage.LEX.NET.Extensions
         private static void PrintPropertiesComplex(object obj, IEnumerable<PropertyInfo> properties)
         {
             Console.WriteLine();
+            Console.WriteLine("Properties:");
             foreach (PropertyInfo property in properties)
             {
                 Console.WriteLine($"\t{property.Name}={property.GetValue(obj)};");
