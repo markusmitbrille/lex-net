@@ -24,6 +24,7 @@ namespace Autrage.LEX.NET.Extensions
                 bindingFlags |= BindingFlags.NonPublic;
 
             Console.Write(obj);
+            Console.Write("; ");
             PrintFields(obj, bindingFlags);
             PrintProperties(obj, bindingFlags);
             Console.WriteLine();
