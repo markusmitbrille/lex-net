@@ -10,7 +10,7 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Methods
 
-        public override bool CanSerialize(Type type) => type.IsEnum || (Nullable.GetUnderlyingType(type)?.IsEnum ?? false);
+        public override bool CanHandle(Type type) => type.IsEnum || (Nullable.GetUnderlyingType(type)?.IsEnum ?? false);
 
         public override bool Serialize(Stream stream, object instance)
         {
@@ -18,7 +18,7 @@ namespace Autrage.LEX.NET.Serialization
             instance.AssertNotNull();
 
             Type type = instance.GetType();
-            if (!CanSerialize(type))
+            if (!CanHandle(type))
             {
                 Warning($"Cannot serialize type {type}!");
                 return false;
@@ -81,7 +81,7 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             expectedType.AssertNotNull();
 
-            if (!CanSerialize(expectedType))
+            if (!CanHandle(expectedType))
             {
                 Warning($"Cannot deserialize type {expectedType}!");
                 return false;

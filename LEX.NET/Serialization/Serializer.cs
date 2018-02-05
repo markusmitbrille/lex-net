@@ -20,7 +20,7 @@ namespace Autrage.LEX.NET.Serialization
 
         public static IMarshaller CreateMarshaller() => new SerializationMarshaller();
 
-        public abstract bool CanSerialize(Type type);
+        public abstract bool CanHandle(Type type);
 
         public abstract bool Serialize(Stream stream, object instance);
 
@@ -74,7 +74,7 @@ namespace Autrage.LEX.NET.Serialization
 
                 using (MemoryStream payload = new MemoryStream())
                 {
-                    Serializer serializer = serializers.FirstOrDefault(s => s.CanSerialize(instance.GetType()));
+                    Serializer serializer = serializers.FirstOrDefault(s => s.CanHandle(instance.GetType()));
                     if (serializer == null)
                     {
                         Warning($"Not suitable serializer specified for {instance.GetType()}!");
@@ -135,7 +135,7 @@ namespace Autrage.LEX.NET.Serialization
 
                 using (MemoryStream payload = new MemoryStream(payloadBuffer))
                 {
-                    Serializer serializer = serializers.FirstOrDefault(s => s.CanSerialize(expectedType));
+                    Serializer serializer = serializers.FirstOrDefault(s => s.CanHandle(expectedType));
                     if (serializer == null)
                     {
                         Warning($"Not suitable serializer specified for {expectedType}!");

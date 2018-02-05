@@ -11,14 +11,14 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Methods
 
-        public override bool CanSerialize(Type type) => type.IsValueType;
+        public override bool CanHandle(Type type) => type.IsValueType;
 
         public override bool Serialize(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (!CanSerialize(instance.GetType()))
+            if (!CanHandle(instance.GetType()))
             {
                 Warning($"Cannot serialize type {instance.GetType()}!");
                 return false;
@@ -32,7 +32,7 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             expectedType.AssertNotNull();
 
-            if (!CanSerialize(expectedType))
+            if (!CanHandle(expectedType))
             {
                 Warning($"Cannot deserialize type {expectedType}!");
                 return false;
