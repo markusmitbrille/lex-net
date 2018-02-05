@@ -43,7 +43,16 @@ namespace Autrage.LEX.NET.Serialization
             referenceIDs[instance] = referenceID;
             stream.Write(referenceID);
 
-            if (SerializeObject(stream, instance))
+            string typeName = Cache.GetNameFrom(instance.GetType());
+            if (typeName == null)
+            {
+                Warning($"Could not serialize {instance.GetType()} instance, could not get type name!");
+                return false;
+            }
+
+            stream.Write(typeName, Encoding);
+
+            if (SerializeFields(stream, instance))
             {
                 return true;
             }
@@ -70,7 +79,7 @@ namespace Autrage.LEX.NET.Serialization
             if (referenceID == null)
             {
                 Warning($"Could not deserialize {expectedType.Name} reference ID!");
-                return expectedType.GetDefault();
+                return null;
             }
 
             object instance = references.GetValueOrDefault(referenceID.Value);
@@ -80,19 +89,16 @@ namespace Autrage.LEX.NET.Serialization
                 if (instance == null)
                 {
                     Warning($"Could not deserialize {expectedType.Name} reference, instantiation failed!");
-                    return expectedType.GetDefault();
+                    return null;
                 }
 
                 references[referenceID.Value] = instance;
 
-                IEnumerable<Field> fields = DeserializeFields(stream);
-                if (fields == null)
+                if (DeserializeFields(stream, instance))
                 {
                     Warning($"Could not deserialize {instance.GetType().Name} instance fields!");
-                    return expectedType.GetDefault();
+                    return null;
                 }
-
-                SetFields(instance, fields);
             }
 
             return instance;
@@ -107,12 +113,12 @@ namespace Autrage.LEX.NET.Serialization
             if (type == null)
             {
                 Warning($"Could not create {expectedType.Name} instance, type deserialization failed!");
-                return expectedType.GetDefault();
+                return null;
             }
             if (!expectedType.IsAssignableFrom(type))
             {
                 Warning($"Could not create {expectedType.Name} instance, type mismatch: expected {expectedType.Name}, deserialized {type.Name}!");
-                return expectedType.GetDefault();
+                return null;
             }
 
             object instance = null;
@@ -122,7 +128,7 @@ namespace Autrage.LEX.NET.Serialization
                 if (instance == null)
                 {
                     Warning($"Could not create {expectedType.Name} instance, constructor invokation failed!");
-                    return expectedType.GetDefault();
+                    return null;
                 }
             }
             else
@@ -131,14 +137,14 @@ namespace Autrage.LEX.NET.Serialization
                 if (constructor == null)
                 {
                     Warning($"Could not create {expectedType.Name} instance, no default constructor found!");
-                    return expectedType.GetDefault();
+                    return null;
                 }
 
                 instance = constructor.Invoke(null);
                 if (instance == null)
                 {
                     Warning($"Could not create {expectedType.Name} instance, constructor invokation failed!");
-                    return expectedType.GetDefault();
+                    return null;
                 }
             }
 

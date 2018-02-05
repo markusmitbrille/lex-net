@@ -25,7 +25,16 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
-            return SerializeObject(stream, instance);
+            string typeName = Cache.GetNameFrom(instance.GetType());
+            if (typeName == null)
+            {
+                Warning($"Could not serialize {instance.GetType()} instance, could not get type name!");
+                return false;
+            }
+
+            stream.Write(typeName, Encoding);
+
+            return SerializeFields(stream, instance);
         }
 
         public override object Deserialize(Stream stream, Type expectedType)
@@ -46,14 +55,11 @@ namespace Autrage.LEX.NET.Serialization
 
             object instance = Activator.CreateInstance(expectedType);
 
-            IEnumerable<Field> fields = DeserializeFields(stream);
-            if (fields == null)
+            if (DeserializeFields(stream, instance))
             {
                 Warning($"Could not deserialize {instance.GetType()} instance fields!");
                 return expectedType.GetDefault();
             }
-
-            SetFields(instance, fields);
 
             return instance;
         }

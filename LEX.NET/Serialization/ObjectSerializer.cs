@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Text;
 
 using static Autrage.LEX.NET.DebugUtils;
@@ -21,76 +20,7 @@ namespace Autrage.LEX.NET.Serialization
 
         #region Methods
 
-        private protected bool SerializeObject(Stream stream, object instance)
-        {
-            stream.AssertNotNull();
-            instance.AssertNotNull();
-
-            string typeName = Cache.GetNameFrom(instance.GetType());
-            if (typeName == null)
-            {
-                Warning($"Could not serialize {instance.GetType()} instance, could not get type name!");
-                return false;
-            }
-
-            stream.Write(typeName, Encoding);
-
-            return SerializeFields(stream, instance);
-        }
-
-        private protected IEnumerable<Field> DeserializeFields(Stream stream)
-        {
-            stream.AssertNotNull();
-
-            int? fieldCount = stream.ReadInt();
-            if (fieldCount == null)
-            {
-                Warning($"Could not deserialize field count!");
-                return null;
-            }
-
-            List<Field> fields = new List<Field>();
-            for (int i = 0; i < fieldCount; i++)
-            {
-                Field field = DeserializeField(stream);
-                if (field == null)
-                {
-                    Warning($"Could not deserialize field [{i}]!");
-                    return null;
-                }
-
-                fields.Add(field);
-            }
-
-            return fields;
-        }
-
-        private protected void SetFields(object instance, IEnumerable<Field> fields)
-        {
-            instance.AssertNotNull();
-            fields.AssertNotNull();
-
-            Type type = instance.GetType();
-
-            foreach (Field field in fields)
-            {
-                FieldInfo info = Cache.GetFieldFrom(type, field.Name);
-                if (info == null)
-                {
-                    Warning($"Could not set {field.Type} field {field.Name} to {field.Value}, no such field found in {type}!");
-                    continue;
-                }
-                if (!info.FieldType.IsAssignableFrom(field.Type))
-                {
-                    Warning($"Could not set {field.Type} field {field.Name} to {field.Value}, type mismatch: expected {field.Type}, was {info.FieldType}!");
-                    continue;
-                }
-
-                info.SetValue(instance, field.Value);
-            }
-        }
-
-        private bool SerializeFields(Stream stream, object instance)
+        private protected bool SerializeFields(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
@@ -110,6 +40,54 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             return true;
+        }
+
+        private protected bool DeserializeFields(Stream stream, object instance)
+        {
+            stream.AssertNotNull();
+
+            int? fieldCount = stream.ReadInt();
+            if (fieldCount == null)
+            {
+                Warning($"Could not deserialize field count!");
+                return false;
+            }
+
+            List<Field> fields = new List<Field>();
+            for (int i = 0; i < fieldCount; i++)
+            {
+                Field field = DeserializeField(stream);
+                if (field == null)
+                {
+                    Warning($"Could not deserialize field [{i}]!");
+                    return false;
+                }
+
+                fields.Add(field);
+            }
+
+            SetFields(instance, fields);
+
+            return true;
+        }
+
+        private protected Type DeserializeType(Stream stream)
+        {
+            string name = stream.ReadString(Encoding);
+            if (name == null)
+            {
+                Warning($"Could not deserialize type name!");
+                return null;
+            }
+
+            Type type = Cache.GetTypeFrom(name);
+            if (type == null)
+            {
+                Warning($"Could not deserialize type {name}!");
+                return null;
+            }
+
+            return type;
         }
 
         private bool SerializeField(Stream stream, object instance, FieldInfo field)
@@ -161,23 +139,29 @@ namespace Autrage.LEX.NET.Serialization
             return new Field(name, type, value);
         }
 
-        private protected Type DeserializeType(Stream stream)
+        private void SetFields(object instance, IEnumerable<Field> fields)
         {
-            string name = stream.ReadString(Encoding);
-            if (name == null)
-            {
-                Warning($"Could not deserialize type name!");
-                return null;
-            }
+            instance.AssertNotNull();
+            fields.AssertNotNull();
 
-            Type type = Cache.GetTypeFrom(name);
-            if (type == null)
-            {
-                Warning($"Could not deserialize type {name}!");
-                return null;
-            }
+            Type type = instance.GetType();
 
-            return type;
+            foreach (Field field in fields)
+            {
+                FieldInfo info = Cache.GetFieldFrom(type, field.Name);
+                if (info == null)
+                {
+                    Warning($"Could not set {field.Type} field {field.Name} to {field.Value}, no such field found in {type}!");
+                    continue;
+                }
+                if (!info.FieldType.IsAssignableFrom(field.Type))
+                {
+                    Warning($"Could not set {field.Type} field {field.Name} to {field.Value}, type mismatch: expected {field.Type}, was {info.FieldType}!");
+                    continue;
+                }
+
+                info.SetValue(instance, field.Value);
+            }
         }
 
         #endregion Methods
