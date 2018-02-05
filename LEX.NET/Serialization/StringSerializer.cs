@@ -35,14 +35,14 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        public override object Deserialize(Stream stream, Type expectedType)
+        public override object Deserialize(Stream stream, Type type)
         {
             stream.AssertNotNull();
-            expectedType.AssertNotNull();
+            type.AssertNotNull();
 
-            if (!CanHandle(expectedType))
+            if (!CanHandle(type))
             {
-                Warning($"Cannot deserialize type {expectedType}!");
+                Warning($"Cannot deserialize type {type}!");
                 return false;
             }
 

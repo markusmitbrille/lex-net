@@ -76,27 +76,27 @@ namespace Autrage.LEX.NET.Serialization
             return false;
         }
 
-        public override object Deserialize(Stream stream, Type expectedType)
+        public override object Deserialize(Stream stream, Type type)
         {
             stream.AssertNotNull();
-            expectedType.AssertNotNull();
+            type.AssertNotNull();
 
-            if (!CanHandle(expectedType))
+            if (!CanHandle(type))
             {
-                Warning($"Cannot deserialize type {expectedType}!");
+                Warning($"Cannot deserialize type {type}!");
                 return false;
             }
 
-            if (Nullable.GetUnderlyingType(expectedType) is Type nullableUnderlyingType)
+            if (Nullable.GetUnderlyingType(type) is Type nullableUnderlyingType)
             {
-                expectedType = nullableUnderlyingType;
+                type = nullableUnderlyingType;
             }
 
-            Type enumUnderlyingType = expectedType.GetEnumUnderlyingType();
+            Type enumUnderlyingType = type.GetEnumUnderlyingType();
             if (enumUnderlyingType == null)
             {
-                Warning($"Could not get underlying type of enum {expectedType}!");
-                return expectedType.GetDefault();
+                Warning($"Could not get underlying type of enum {type}!");
+                return type.GetDefault();
             }
 
             object instance = null;
@@ -135,12 +135,12 @@ namespace Autrage.LEX.NET.Serialization
 
             if (instance == null)
             {
-                Warning($"Underlying type {enumUnderlyingType} of {expectedType} not supported!");
-                return expectedType.GetDefault();
+                Warning($"Underlying type {enumUnderlyingType} of {type} not supported!");
+                return type.GetDefault();
             }
             else
             {
-                return Enum.ToObject(expectedType, instance);
+                return Enum.ToObject(type, instance);
             }
         }
 

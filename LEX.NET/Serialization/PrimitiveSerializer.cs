@@ -94,80 +94,80 @@ namespace Autrage.LEX.NET.Serialization
             return false;
         }
 
-        public override object Deserialize(Stream stream, Type expectedType)
+        public override object Deserialize(Stream stream, Type type)
         {
             stream.AssertNotNull();
-            expectedType.AssertNotNull();
+            type.AssertNotNull();
 
-            if (!CanHandle(expectedType))
+            if (!CanHandle(type))
             {
-                Warning($"Cannot deserialize type {expectedType}!");
+                Warning($"Cannot deserialize type {type}!");
                 return false;
             }
 
-            if (Nullable.GetUnderlyingType(expectedType) is Type underlyingType)
+            if (Nullable.GetUnderlyingType(type) is Type underlyingType)
             {
-                expectedType = underlyingType;
+                type = underlyingType;
             }
 
             object instance = null;
-            if (expectedType == typeof(byte))
+            if (type == typeof(byte))
             {
                 instance = stream.Read();
             }
-            if (expectedType == typeof(sbyte))
+            if (type == typeof(sbyte))
             {
                 instance = stream.ReadSByte();
             }
-            if (expectedType == typeof(short))
+            if (type == typeof(short))
             {
                 instance = stream.ReadShort();
             }
-            if (expectedType == typeof(int))
+            if (type == typeof(int))
             {
                 instance = stream.ReadInt();
             }
-            if (expectedType == typeof(long))
+            if (type == typeof(long))
             {
                 instance = stream.ReadLong();
             }
-            if (expectedType == typeof(ushort))
+            if (type == typeof(ushort))
             {
                 instance = stream.ReadUShort();
             }
-            if (expectedType == typeof(uint))
+            if (type == typeof(uint))
             {
                 instance = stream.ReadUInt();
             }
-            if (expectedType == typeof(ulong))
+            if (type == typeof(ulong))
             {
                 instance = stream.ReadULong();
             }
-            if (expectedType == typeof(float))
+            if (type == typeof(float))
             {
                 instance = stream.ReadFloat();
             }
-            if (expectedType == typeof(double))
+            if (type == typeof(double))
             {
                 instance = stream.ReadDouble();
             }
-            if (expectedType == typeof(decimal))
+            if (type == typeof(decimal))
             {
                 instance = stream.ReadDecimal();
             }
-            if (expectedType == typeof(bool))
+            if (type == typeof(bool))
             {
                 instance = stream.ReadBool();
             }
-            if (expectedType == typeof(char))
+            if (type == typeof(char))
             {
                 instance = stream.ReadChar();
             }
 
             if (instance == null)
             {
-                Warning($"Primitive type {expectedType} not supported!");
-                return expectedType.GetDefault();
+                Warning($"Primitive type {type} not supported!");
+                return type.GetDefault();
             }
             else
             {

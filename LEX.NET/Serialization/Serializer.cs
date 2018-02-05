@@ -24,7 +24,7 @@ namespace Autrage.LEX.NET.Serialization
 
         public abstract bool Serialize(Stream stream, object instance);
 
-        public abstract object Deserialize(Stream stream, Type expectedTyp);
+        public abstract object Deserialize(Stream stream, Type type);
 
         #endregion Methods
 
