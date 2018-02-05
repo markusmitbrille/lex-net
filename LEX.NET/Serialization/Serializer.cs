@@ -18,13 +18,13 @@ namespace Autrage.LEX.NET.Serialization
 
         #region Methods
 
-        public static IMarshaller CreateMarshaller() => new SerializationMarshaller();
-
         public abstract bool CanHandle(Type type);
 
         public abstract bool Serialize(Stream stream, object instance);
 
         public abstract object Deserialize(Stream stream, Type type);
+
+        internal static IMarshaller CreateMarshaller() => new SerializationMarshaller();
 
         #endregion Methods
 

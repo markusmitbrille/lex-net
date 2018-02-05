@@ -7,6 +7,11 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Methods
 
+        public static IMarshaller Create()
+        {
+            return Serializer.CreateMarshaller();
+        }
+
         public static void Serialize(Stream stream, object instance, params Type[] serializers)
         {
             IMarshaller marshaller = Serializer.CreateMarshaller();
