@@ -61,8 +61,8 @@
     <Compile Include="Serialization\DataContractAttribute.cs" />
     <Compile Include="Serialization\DataMemberAttribute.cs" />
     <Compile Include="Serialization\EnumSerializer.cs" />
-    <Compile Include="Serialization\Field.cs" />
     <Compile Include="Serialization\IMarshaller.cs" />
+    <Compile Include="Extensions\KeyValuePairExtensions.cs" />
     <Compile Include="Serialization\Marshaller.cs" />
     <Compile Include="Serialization\ObjectSerializer.cs" />
     <Compile Include="Serialization\PrimitiveSerializer.cs" />
