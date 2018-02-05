@@ -83,7 +83,12 @@ namespace Autrage.LEX.NET.Serialization
                     }
                     else
                     {
-                        FieldsByType[type] = type.GetFields(BindingFlags.Instance | BindingFlags.Public).ToDictionary(f => f.Name);
+                        FieldsByType[type] =
+                            (from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public)
+                             let attribute = field.GetCustomAttribute<DataMemberAttribute>()
+                             let name = string.IsNullOrEmpty(attribute?.Name) ? field.Name : attribute.Name
+                             select new { name, field })
+                             .ToDictionary(e => e.name, e => e.field);
                     }
                 }
                 catch (ArgumentException)
