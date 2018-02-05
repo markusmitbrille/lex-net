@@ -37,7 +37,7 @@ namespace Autrage.LEX.NET.Serialization
                 return true;
             }
 
-            long referenceID = referenceIDs.Max(e => e.Value) + 1;
+            long referenceID = referenceIDs.Count == 0 ? 0 : referenceIDs.Max(e => e.Value) + 1;
             referenceIDs[instance] = referenceID;
             stream.Write(referenceID);
 
