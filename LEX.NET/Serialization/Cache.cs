@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using static Autrage.LEX.NET.DebugUtils;
+
 namespace Autrage.LEX.NET.Serialization
 {
     internal static class Cache
@@ -13,13 +15,9 @@ namespace Autrage.LEX.NET.Serialization
 
         private static Dictionary<Type, bool> SkipConstructorOfType { get; } = new Dictionary<Type, bool>();
 
-        private static Dictionary<FieldInfo, string> NamesByField { get; } = new Dictionary<FieldInfo, string>();
-
-        private static Dictionary<Type, IEnumerable<FieldInfo>> FieldsByType { get; } = new Dictionary<Type, IEnumerable<FieldInfo>>();
+        private static Dictionary<Type, IDictionary<string, FieldInfo>> FieldsByType { get; } = new Dictionary<Type, IDictionary<string, FieldInfo>>();
 
         private static Dictionary<string, Type> TypesByName { get; } = new Dictionary<string, Type>();
-
-        private static Dictionary<(Type type, string name), FieldInfo> FieldsByNameAndType { get; } = new Dictionary<(Type, string), FieldInfo>();
 
         #endregion Properties
 
@@ -65,42 +63,33 @@ namespace Autrage.LEX.NET.Serialization
             return SkipConstructorOfType[type];
         }
 
-        public static string GetNameFrom(FieldInfo field)
-        {
-            field.AssertNotNull();
-
-            if (!NamesByField.ContainsKey(field))
-            {
-                DataMemberAttribute member = field.GetCustomAttribute<DataMemberAttribute>();
-                if (member == null || string.IsNullOrEmpty(member.Name))
-                {
-                    NamesByField[field] = field.Name;
-                }
-                else
-                {
-                    NamesByField[field] = member.Name;
-                }
-            }
-
-            return NamesByField[field];
-        }
-
-        public static IEnumerable<FieldInfo> GetFieldsFrom(Type type)
+        public static IDictionary<string, FieldInfo> GetFieldsFrom(Type type)
         {
             type.AssertNotNull();
 
             if (!FieldsByType.ContainsKey(type))
             {
-                if (type.IsDefined(typeof(DataContractAttribute)))
+                try
                 {
-                    FieldsByType[type] =
-                        from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                        where field.IsDefined(typeof(DataMemberAttribute))
-                        select field;
+                    if (type.IsDefined(typeof(DataContractAttribute)))
+                    {
+                        FieldsByType[type] =
+                            (from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                             let attribute = field.GetCustomAttribute<DataMemberAttribute>()
+                             where attribute != null
+                             let name = string.IsNullOrEmpty(attribute.Name) ? field.Name : attribute.Name
+                             select new { name, field })
+                             .ToDictionary(e => e.name, e => e.field);
+                    }
+                    else
+                    {
+                        FieldsByType[type] = type.GetFields(BindingFlags.Instance | BindingFlags.Public).ToDictionary(f => f.Name);
+                    }
                 }
-                else
+                catch (ArgumentException)
                 {
-                    FieldsByType[type] = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+                    Error($"Duplicate names found for fields in {type}!");
+                    throw;
                 }
             }
 
@@ -128,27 +117,6 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             return TypesByName[name];
-        }
-
-        public static FieldInfo GetFieldFrom(Type type, string name)
-        {
-            type.AssertNotNull();
-            name.AssertNotNull();
-
-            if (!FieldsByNameAndType.ContainsKey((type, name)))
-            {
-                IEnumerable<FieldInfo> fields = GetFieldsFrom(type);
-
-                FieldInfo field = fields.SingleOrDefault(f => f.GetCustomAttribute<DataMemberAttribute>()?.Name == name);
-                if (field == null)
-                {
-                    field = fields.SingleOrDefault(f => f.Name == name);
-                }
-
-                FieldsByNameAndType[(type, name)] = field;
-            }
-
-            return FieldsByNameAndType[(type, name)];
         }
 
         #endregion Methods

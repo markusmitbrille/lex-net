@@ -27,125 +27,71 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (!CanHandle(instance.GetType()))
+            Type type = instance.GetType();
+            if (!CanHandle(type))
             {
-                Warning($"Cannot serialize type {instance.GetType()}!");
+                Warning($"Cannot handle type {type}!");
                 return false;
             }
 
             if (referenceIDs.ContainsKey(instance))
             {
                 stream.Write(referenceIDs[instance]);
+                stream.Write(false);
                 return true;
             }
 
             long referenceID = referenceIDs.Count == 0 ? 0 : referenceIDs.Max(e => e.Value) + 1;
             referenceIDs[instance] = referenceID;
             stream.Write(referenceID);
+            stream.Write(true);
 
-            string typeName = Cache.GetNameFrom(instance.GetType());
-            if (typeName == null)
+            if (!SerializeFields(stream, instance))
             {
-                Warning($"Could not serialize {instance.GetType()} instance, could not get type name!");
-                return false;
-            }
-
-            stream.Write(typeName, Marshaller.Encoding);
-
-            if (SerializeFields(stream, instance))
-            {
-                return true;
-            }
-            else
-            {
+                Warning($"Could not serialize {type} instance fields!");
                 referenceIDs.Remove(instance);
                 return false;
             }
+
+            return true;
         }
 
-        public override object Deserialize(Stream stream, Type expectedType)
+        public override object Deserialize(Stream stream, Type type)
         {
             stream.AssertNotNull();
-            expectedType.AssertNotNull();
-            expectedType.Assert(t => !t.IsValueType);
+            type.AssertNotNull();
 
-            if (!CanHandle(expectedType))
+            if (!CanHandle(type))
             {
-                Warning($"Cannot deserialize type {expectedType}!");
+                Warning($"Cannot handle type {type}!");
                 return false;
             }
 
             long? referenceID = stream.ReadLong();
             if (referenceID == null)
             {
-                Warning($"Could not deserialize {expectedType.Name} reference ID!");
+                Warning($"Could not read {type} reference ID!");
                 return null;
             }
 
             object instance = references.GetValueOrDefault(referenceID.Value);
             if (instance == null)
             {
-                instance = Instantiate(stream, expectedType);
-                if (instance == null)
-                {
-                    Warning($"Could not deserialize {expectedType.Name} reference, instantiation failed!");
-                    return null;
-                }
-
+                instance = Instantiate(type);
                 references[referenceID.Value] = instance;
-
-                if (DeserializeFields(stream, instance))
-                {
-                    Warning($"Could not deserialize {instance.GetType().Name} instance fields!");
-                    return null;
-                }
             }
 
-            return instance;
-        }
-
-        private object Instantiate(Stream stream, Type expectedType)
-        {
-            stream.AssertNotNull();
-            expectedType.AssertNotNull();
-
-            Type type = DeserializeType(stream);
-            if (type == null)
+            bool? hasFields = stream.ReadBool();
+            if (hasFields == null)
             {
-                Warning($"Could not create {expectedType.Name} instance, type deserialization failed!");
-                return null;
-            }
-            if (!expectedType.IsAssignableFrom(type))
-            {
-                Warning($"Could not create {expectedType.Name} instance, type mismatch: expected {expectedType.Name}, deserialized {type.Name}!");
+                Warning($"Could not read {type} fields value indicator!");
                 return null;
             }
 
-            object instance = null;
-            if (Cache.SkipConstructorOf(type))
+            if (hasFields == true && !DeserializeFields(stream, instance))
             {
-                instance = FormatterServices.GetSafeUninitializedObject(type);
-                if (instance == null)
-                {
-                    Warning($"Could not create {expectedType.Name} instance, constructor invokation failed!");
-                    return null;
-                }
-            }
-            else
-            {
-                ConstructorInfo constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-                if (constructor == null)
-                {
-                    Warning($"Could not create {expectedType.Name} instance, no default constructor found!");
-                    return null;
-                }
-
-                instance = constructor.Invoke(null);
-                if (instance == null)
-                {
-                    Warning($"Could not create {expectedType.Name} instance, constructor invokation failed!");
-                    return null;
-                }
+                Warning($"Could not deserialize {type} instance fields!");
+                return null;
             }
 
             return instance;

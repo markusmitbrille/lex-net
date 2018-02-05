@@ -16,37 +16,44 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (!CanHandle(instance.GetType()))
+            Type type = instance.GetType();
+            if (!CanHandle(type))
             {
-                Warning($"Cannot serialize type {instance.GetType()}!");
+                Warning($"Cannot handle type {type}!");
                 return false;
             }
 
-            return SerializeFields(stream, instance);
+            if (!SerializeFields(stream, instance))
+            {
+                Warning($"Could not serialize {type} instance fields!");
+                return false;
+            }
+
+            return true;
         }
 
-        public override object Deserialize(Stream stream, Type expectedType)
+        public override object Deserialize(Stream stream, Type type)
         {
             stream.AssertNotNull();
-            expectedType.AssertNotNull();
+            type.AssertNotNull();
 
-            if (!CanHandle(expectedType))
+            if (!CanHandle(type))
             {
-                Warning($"Cannot deserialize type {expectedType}!");
-                return false;
+                Warning($"Cannot handle type {type}!");
+                return type.GetDefault();
             }
 
-            if (Nullable.GetUnderlyingType(expectedType) is Type underlyingType)
+            if (Nullable.GetUnderlyingType(type) is Type underlyingType)
             {
-                expectedType = underlyingType;
+                type = underlyingType;
             }
 
-            object instance = Activator.CreateInstance(expectedType);
+            object instance = Instantiate(type);
 
-            if (DeserializeFields(stream, instance))
+            if (!DeserializeFields(stream, instance))
             {
-                Warning($"Could not deserialize {instance.GetType()} instance fields!");
-                return expectedType.GetDefault();
+                Warning($"Could not deserialize {type} instance fields!");
+                return type.GetDefault();
             }
 
             return instance;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using System.Runtime.Serialization;
 using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
@@ -18,18 +18,21 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            IEnumerable<FieldInfo> fields = Cache.GetFieldsFrom(instance.GetType());
+            IDictionary<string, FieldInfo> fields = Cache.GetFieldsFrom(instance.GetType());
             if (fields == null)
             {
-                Warning($"Could not serialize {instance.GetType()} fields, could not get fields!");
+                Warning($"Could not retrieve fields of {instance.GetType()} from cache!");
                 return false;
             }
 
             stream.Write(fields.Count());
 
-            foreach (FieldInfo field in fields)
+            foreach (var (name, info) in fields)
             {
-                if (!SerializeField(stream, instance, field)) return false;
+                stream.Write(name, Marshaller.Encoding);
+
+                // Recursive call to marshaller for cascading serialization
+                Marshaller.Serialize(stream, info.GetValue(instance));
             }
 
             return true;
@@ -42,118 +45,61 @@ namespace Autrage.LEX.NET.Serialization
             int? fieldCount = stream.ReadInt();
             if (fieldCount == null)
             {
-                Warning($"Could not deserialize field count!");
+                Warning($"Could not read field count!");
                 return false;
             }
 
-            List<Field> fields = new List<Field>();
+            Type type = instance.GetType();
+            IDictionary<string, FieldInfo> fields = Cache.GetFieldsFrom(type);
             for (int i = 0; i < fieldCount; i++)
             {
-                Field field = DeserializeField(stream);
-                if (field == null)
+                string name = stream.ReadString(Marshaller.Encoding);
+                if (name == null)
                 {
-                    Warning($"Could not deserialize field [{i}]!");
+                    Warning($"Could not read field name!");
                     return false;
                 }
 
-                fields.Add(field);
-            }
+                // Recursive call to marshaller for cascading deserialization
+                object value = Marshaller.Deserialize(stream);
 
-            SetFields(instance, fields);
-
-            return true;
-        }
-
-        private protected Type DeserializeType(Stream stream)
-        {
-            string name = stream.ReadString(Marshaller.Encoding);
-            if (name == null)
-            {
-                Warning($"Could not deserialize type name!");
-                return null;
-            }
-
-            Type type = Cache.GetTypeFrom(name);
-            if (type == null)
-            {
-                Warning($"Could not deserialize type {name}!");
-                return null;
-            }
-
-            return type;
-        }
-
-        private bool SerializeField(Stream stream, object instance, FieldInfo field)
-        {
-            stream.AssertNotNull();
-            instance.AssertNotNull();
-
-            string fieldName = Cache.GetNameFrom(field);
-            if (fieldName == null)
-            {
-                Warning($"Could not serialize {field.FieldType} field {field.Name}, could not get field name!");
-                return false;
-            }
-
-            string fieldTypeName = Cache.GetNameFrom(field.FieldType);
-            if (fieldTypeName == null)
-            {
-                Warning($"Could not serialize {field.FieldType} field {field.Name}, could not get field type name!");
-                return false;
-            }
-
-            stream.Write(fieldName, Marshaller.Encoding);
-            stream.Write(fieldTypeName, Marshaller.Encoding);
-            Serialize(stream, field.GetValue(instance));
-
-            return true;
-        }
-
-        private Field DeserializeField(Stream stream)
-        {
-            stream.AssertNotNull();
-
-            string name = stream.ReadString(Marshaller.Encoding);
-            if (name == null)
-            {
-                Warning($"Could not deserialize field name!");
-                return null;
-            }
-
-            Type type = DeserializeType(stream);
-            if (type == null)
-            {
-                Warning($"Could not deserialize {name} field type!");
-                return null;
-            }
-
-            object value = Deserialize(stream, type);
-
-            return new Field(name, type, value);
-        }
-
-        private void SetFields(object instance, IEnumerable<Field> fields)
-        {
-            instance.AssertNotNull();
-            fields.AssertNotNull();
-
-            Type type = instance.GetType();
-
-            foreach (Field field in fields)
-            {
-                FieldInfo info = Cache.GetFieldFrom(type, field.Name);
+                FieldInfo info = fields.GetValueOrDefault(name);
                 if (info == null)
                 {
-                    Warning($"Could not set {field.Type} field {field.Name} to {field.Value}, no such field found in {type}!");
+                    Log($"Deserialized value for field {type}.{name}, but failed to retrieve field info from cache - discarding value.");
                     continue;
                 }
-                if (!info.FieldType.IsAssignableFrom(field.Type))
+                if (!info.FieldType.IsInstanceOfType(value))
                 {
-                    Warning($"Could not set {field.Type} field {field.Name} to {field.Value}, type mismatch: expected {field.Type}, was {info.FieldType}!");
+                    Log($"Deserialized value for field {type}.{name}, but value is not instance of field type {info.FieldType} - discarding value.");
                     continue;
                 }
 
-                info.SetValue(instance, field.Value);
+                info.SetValue(instance, value);
+            }
+
+            return true;
+        }
+
+        private protected static object Instantiate(Type type)
+        {
+            type.AssertNotNull();
+
+            if (Cache.SkipConstructorOf(type))
+            {
+                return FormatterServices.GetSafeUninitializedObject(type);
+            }
+            else
+            {
+                try
+                {
+                    return Activator.CreateInstance(type, true);
+                }
+                catch (MissingMethodException)
+                {
+                    Error($"No parameterless constructor found for {type}!");
+                    throw;
+                }
             }
         }
 
