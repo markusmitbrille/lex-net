@@ -84,7 +84,7 @@ namespace Autrage.LEX.NET.Serialization
             if (!CanHandle(type))
             {
                 Warning($"Cannot deserialize type {type}!");
-                return false;
+                return type.GetDefault();
             }
 
             if (Nullable.GetUnderlyingType(type) is Type nullableUnderlyingType)
