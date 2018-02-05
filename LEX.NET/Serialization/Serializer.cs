@@ -100,7 +100,7 @@ namespace Autrage.LEX.NET.Serialization
 
             public void Serialize<T>(Stream stream, T instance)
             {
-                Serialize(stream, instance);
+                Serialize(stream, (object)instance);
             }
 
             public object Deserialize(Stream stream, Type expectedType)
