@@ -30,7 +30,7 @@ namespace Autrage.LEX.NET.Serialization
             Type type = instance.GetType();
             if (!CanHandle(type))
             {
-                Warning($"Cannot handle type {type}!");
+                Warning($"{nameof(ReferenceTypeSerializer)} cannot handle type {type}!");
                 return false;
             }
 
@@ -63,7 +63,7 @@ namespace Autrage.LEX.NET.Serialization
 
             if (!CanHandle(type))
             {
-                Warning($"Cannot handle type {type}!");
+                Warning($"{nameof(ReferenceTypeSerializer)} cannot handle type {type}!");
                 return false;
             }
 
