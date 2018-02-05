@@ -36,7 +36,14 @@ namespace Autrage.LEX.NET.Serialization
 
         public static T Deserialize<T>(Stream stream, params Type[] serializers)
         {
-            return (T)Deserialize(stream, typeof(T), serializers);
+            if (Deserialize(stream, typeof(T), serializers) is T instance)
+            {
+                return instance;
+            }
+            else
+            {
+                return default;
+            }
         }
 
         #endregion Methods
