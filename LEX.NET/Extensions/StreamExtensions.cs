@@ -18,7 +18,11 @@ namespace Autrage.LEX.NET.Extensions
         public static byte[] Read(this Stream stream, int count)
         {
             stream.AssertNotNull(nameof(stream));
-            count.Assert(i => i > 0);
+
+            if (count == 0)
+            {
+                return new byte[0];
+            }
 
             byte[] buffer = new byte[count];
             if (stream.Read(buffer, 0, count) < count)
