@@ -140,7 +140,7 @@ namespace Autrage.LEX.NET.Serialization
             }
             else
             {
-                return instance;
+                return Enum.ToObject(expectedType, instance);
             }
         }
 
