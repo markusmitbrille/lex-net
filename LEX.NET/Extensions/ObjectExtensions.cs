@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 
 namespace Autrage.LEX.NET.Extensions
 {
     public static class ObjectExtensions
     {
+        #region Methods
+
         public static void Print(this object obj, bool instances = true, bool statics = false, bool publics = true, bool nonPublics = false)
         {
             obj.AssertNotNull(nameof(obj));
@@ -25,12 +25,19 @@ namespace Autrage.LEX.NET.Extensions
 
             Console.Write(obj);
             PrintFields(obj, bindingFlags);
+            PrintProperties(obj, bindingFlags);
+            Console.WriteLine();
         }
 
         private static void PrintFields(object obj, BindingFlags bindingFlags)
         {
             IEnumerable<FieldInfo> fields = obj.GetType().GetFields(bindingFlags);
-            if (fields.Count() < 5 && fields.All(f => f.FieldType.IsPrimitive || f.FieldType.IsEnum))
+            if (fields.Count() == 0)
+            {
+                return;
+            }
+
+            if (fields.Count() < 5)
             {
                 PrintFieldsSimple(obj, fields);
             }
@@ -64,7 +71,12 @@ namespace Autrage.LEX.NET.Extensions
         private static void PrintProperties(object obj, BindingFlags bindingFlags)
         {
             IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties(bindingFlags).Where(p => p.CanRead);
-            if (properties.Count() < 5 && properties.All(p => p.PropertyType.IsPrimitive || p.PropertyType.IsEnum))
+            if (properties.Count() == 0)
+            {
+                return;
+            }
+
+            if (properties.Count() < 5)
             {
                 PrintPropertiesSimple(obj, properties);
             }
@@ -94,5 +106,7 @@ namespace Autrage.LEX.NET.Extensions
             }
             Console.WriteLine();
         }
+
+        #endregion Methods
     }
 }
