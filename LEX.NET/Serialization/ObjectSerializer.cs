@@ -13,6 +13,28 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Methods
 
+        private protected static object Instantiate(Type type)
+        {
+            type.AssertNotNull();
+
+            if (Cache.SkipConstructorOf(type))
+            {
+                return FormatterServices.GetSafeUninitializedObject(type);
+            }
+            else
+            {
+                try
+                {
+                    return Activator.CreateInstance(type, true);
+                }
+                catch (MissingMethodException)
+                {
+                    Error($"No parameterless constructor found for {type}!");
+                    throw;
+                }
+            }
+        }
+
         private protected bool SerializeFields(Stream stream, object instance)
         {
             stream.AssertNotNull();
@@ -79,28 +101,6 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             return true;
-        }
-
-        private protected static object Instantiate(Type type)
-        {
-            type.AssertNotNull();
-
-            if (Cache.SkipConstructorOf(type))
-            {
-                return FormatterServices.GetSafeUninitializedObject(type);
-            }
-            else
-            {
-                try
-                {
-                    return Activator.CreateInstance(type, true);
-                }
-                catch (MissingMethodException)
-                {
-                    Error($"No parameterless constructor found for {type}!");
-                    throw;
-                }
-            }
         }
 
         #endregion Methods
