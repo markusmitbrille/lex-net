@@ -58,8 +58,10 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="MathUtils.cs" />
     <Compile Include="Serialization\Cache.cs" />
+    <Compile Include="Serialization\ContractSerializer.cs" />
     <Compile Include="Serialization\DataContractAttribute.cs" />
     <Compile Include="Serialization\DataMemberAttribute.cs" />
+    <Compile Include="Serialization\CollectionSerializer.cs" />
     <Compile Include="Serialization\EnumSerializer.cs" />
     <Compile Include="Serialization\IMarshaller.cs" />
     <Compile Include="Extensions\KeyValuePairExtensions.cs" />

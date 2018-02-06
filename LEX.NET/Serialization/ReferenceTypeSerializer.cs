@@ -7,7 +7,7 @@ using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
 {
-    public sealed class ReferenceTypeSerializer : ObjectSerializer
+    public abstract class ReferenceTypeSerializer : ObjectSerializer
     {
         #region Fields
 
@@ -20,7 +20,7 @@ namespace Autrage.LEX.NET.Serialization
 
         public override bool CanHandle(Type type) => type.IsClass;
 
-        public override bool Serialize(Stream stream, object instance)
+        public sealed override bool Serialize(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
@@ -44,9 +44,9 @@ namespace Autrage.LEX.NET.Serialization
             stream.Write(referenceID);
             stream.Write(true);
 
-            if (!SerializeFields(stream, instance))
+            if (!SerializePayload(stream, instance))
             {
-                Warning($"Could not serialize {type} instance fields!");
+                Warning($"Could not serialize {type} payload!");
                 referenceIDs.Remove(instance);
                 return false;
             }
@@ -54,7 +54,7 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        public override object Deserialize(Stream stream, Type type)
+        public sealed override object Deserialize(Stream stream, Type type)
         {
             stream.AssertNotNull();
             type.AssertNotNull();
@@ -79,21 +79,25 @@ namespace Autrage.LEX.NET.Serialization
                 references[referenceID.Value] = instance;
             }
 
-            bool? hasFields = stream.ReadBool();
-            if (hasFields == null)
+            bool? hasPayload = stream.ReadBool();
+            if (hasPayload == null)
             {
-                Warning($"Could not read {type} fields value indicator!");
+                Warning($"Could not read {type} payload indicator!");
                 return null;
             }
 
-            if (hasFields == true && !DeserializeFields(stream, instance))
+            if (hasPayload == true && !DeserializePayload(stream, instance))
             {
-                Warning($"Could not deserialize {type} instance fields!");
+                Warning($"Could not deserialize {type} payload!");
                 return null;
             }
 
             return instance;
         }
+
+        protected abstract bool SerializePayload(Stream stream, object instance);
+
+        protected abstract bool DeserializePayload(Stream stream, object instance);
 
         #endregion Methods
     }
