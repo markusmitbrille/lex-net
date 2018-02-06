@@ -19,6 +19,10 @@ namespace Autrage.LEX.NET.Serialization
 
         private static Dictionary<string, Type> TypesByName { get; } = new Dictionary<string, Type>();
 
+        private static Dictionary<Type, IDictionary<Type, MethodInfo>> AddMethodsByType { get; } = new Dictionary<Type, IDictionary<Type, MethodInfo>>();
+
+        private static Dictionary<Type, PropertyInfo> CountPropertiesByType { get; } = new Dictionary<Type, PropertyInfo>();
+
         #endregion Properties
 
         #region Methods
@@ -122,6 +126,40 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             return TypesByName[name];
+        }
+
+        public static IDictionary<Type, MethodInfo> GetAddMethodsFrom(Type type)
+        {
+            type.AssertNotNull();
+
+            if (!AddMethodsByType.ContainsKey(type))
+            {
+                IDictionary<Type, MethodInfo> addMethods =
+                    (from i in type.GetInterfaces()
+                     where i.IsGenericType
+                     where i.GetGenericTypeDefinition() == typeof(ICollection<>)
+                     let itemType = i.GenericTypeArguments.SingleOrDefault()
+                     where itemType != null
+                     let addMethod = i.GetMethod(nameof(ICollection<object>.Add), new Type[] { itemType })
+                     select new { itemType, addMethod })
+                     .ToDictionary(e => e.itemType, e => e.addMethod);
+
+                AddMethodsByType[type] = addMethods;
+            }
+
+            return AddMethodsByType[type];
+        }
+
+        public static PropertyInfo GetCountPropertyFrom(Type type)
+        {
+            type.AssertNotNull();
+
+            if (!CountPropertiesByType.ContainsKey(type))
+            {
+                CountPropertiesByType[type] = type.GetProperty(nameof(ICollection<object>.Count));
+            }
+
+            return CountPropertiesByType[type];
         }
 
         #endregion Methods
