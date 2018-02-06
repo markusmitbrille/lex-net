@@ -62,6 +62,7 @@
     <Compile Include="Serialization\DataContractAttribute.cs" />
     <Compile Include="Serialization\DataMemberAttribute.cs" />
     <Compile Include="Serialization\CollectionSerializer.cs" />
+    <Compile Include="Serialization\DictionarySerializer.cs" />
     <Compile Include="Serialization\EnumSerializer.cs" />
     <Compile Include="Serialization\IMarshaller.cs" />
     <Compile Include="Extensions\KeyValuePairExtensions.cs" />
