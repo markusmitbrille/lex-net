@@ -9,7 +9,7 @@ using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
 {
-    public sealed class CollectionSerializer : ReferenceTypeSerializer
+    public sealed class GenericCollectionSerializer : ReferenceTypeSerializer
     {
         #region Methods
 
