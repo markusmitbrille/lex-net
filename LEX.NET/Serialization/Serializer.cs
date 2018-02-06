@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using static Autrage.LEX.NET.DebugUtils;
 
@@ -41,6 +42,8 @@ namespace Autrage.LEX.NET.Serialization
             #region Properties
 
             public Encoding Encoding { get; set; } = Encoding.UTF8;
+            public Func<AssemblyName, Assembly> AssemblyResolver { get; set; }
+            public Func<Assembly, string, bool, Type> TypeResolver { get; set; }
 
             #endregion Properties
 
@@ -140,7 +143,7 @@ namespace Autrage.LEX.NET.Serialization
                     return null;
                 }
 
-                Type type = Cache.GetTypeFrom(typeName);
+                Type type = Cache.GetTypeFrom(typeName, AssemblyResolver, TypeResolver);
                 if (type == null)
                 {
                     Warning($"Could not retrieve type for {typeName} from cache!");

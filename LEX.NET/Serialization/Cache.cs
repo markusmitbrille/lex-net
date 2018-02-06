@@ -33,15 +33,7 @@ namespace Autrage.LEX.NET.Serialization
 
             if (!NamesByType.ContainsKey(type))
             {
-                DataContractAttribute contract = type.GetCustomAttribute<DataContractAttribute>();
-                if (contract == null || string.IsNullOrEmpty(contract.Name))
-                {
-                    NamesByType[type] = type.FullName;
-                }
-                else
-                {
-                    NamesByType[type] = contract.Name;
-                }
+                NamesByType[type] = type.AssemblyQualifiedName;
             }
 
             return NamesByType[type];
@@ -79,9 +71,8 @@ namespace Autrage.LEX.NET.Serialization
                     {
                         FieldsByType[type] =
                             (from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                             let attribute = field.GetCustomAttribute<DataMemberAttribute>()
-                             where attribute != null
-                             let name = string.IsNullOrEmpty(attribute.Name) ? field.Name : attribute.Name
+                             where field.IsDefined(typeof(DataMemberAttribute))
+                             let name = field.Name
                              select new { name, field })
                              .ToDictionary(e => e.name, e => e.field);
                     }
@@ -89,8 +80,7 @@ namespace Autrage.LEX.NET.Serialization
                     {
                         FieldsByType[type] =
                             (from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public)
-                             let attribute = field.GetCustomAttribute<DataMemberAttribute>()
-                             let name = string.IsNullOrEmpty(attribute?.Name) ? field.Name : attribute.Name
+                             let name = field.Name
                              select new { name, field })
                              .ToDictionary(e => e.name, e => e.field);
                     }
@@ -105,24 +95,13 @@ namespace Autrage.LEX.NET.Serialization
             return FieldsByType[type];
         }
 
-        public static Type GetTypeFrom(string name)
+        public static Type GetTypeFrom(string name, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver)
         {
             name.AssertNotNull();
 
             if (!TypesByName.ContainsKey(name))
             {
-                IEnumerable<Type> allTypes =
-                    from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    from t in assembly.GetTypes()
-                    select t;
-
-                Type type = allTypes.SingleOrDefault(t => t.GetCustomAttribute<DataContractAttribute>()?.Name == name);
-                if (type == null)
-                {
-                    type = allTypes.SingleOrDefault(t => t.FullName == name);
-                }
-
-                TypesByName[name] = type;
+                TypesByName[name] = Type.GetType(name, assemblyResolver, typeResolver, false, false);
             }
 
             return TypesByName[name];

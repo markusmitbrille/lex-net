@@ -7,7 +7,6 @@ namespace Autrage.LEX.NET.Serialization
     {
         #region Properties
 
-        public string Name { get; }
         public bool SkipConstructor { get; set; }
 
         #endregion Properties
@@ -18,11 +17,8 @@ namespace Autrage.LEX.NET.Serialization
         {
         }
 
-        public DataContractAttribute(string name) => Name = name;
-
-        public DataContractAttribute(string name, bool skipConstructor)
+        public DataContractAttribute(bool skipConstructor)
         {
-            Name = name;
             SkipConstructor = skipConstructor;
         }
 

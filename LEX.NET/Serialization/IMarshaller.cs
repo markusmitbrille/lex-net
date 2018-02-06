@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Autrage.LEX.NET.Serialization
@@ -9,6 +10,8 @@ namespace Autrage.LEX.NET.Serialization
         #region Properties
 
         Encoding Encoding { get; set; }
+        Func<AssemblyName, Assembly> AssemblyResolver { get; set; }
+        Func<Assembly, string, bool, Type> TypeResolver { get; set; }
 
         #endregion Properties
 
