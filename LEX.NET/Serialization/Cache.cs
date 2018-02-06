@@ -17,6 +17,8 @@ namespace Autrage.LEX.NET.Serialization
 
         private static Dictionary<Type, IDictionary<string, FieldInfo>> FieldsByType { get; } = new Dictionary<Type, IDictionary<string, FieldInfo>>();
 
+        private static Dictionary<Type, IDictionary<string, PropertyInfo>> PropertiesByType { get; } = new Dictionary<Type, IDictionary<string, PropertyInfo>>();
+
         private static Dictionary<string, Type> TypesByName { get; } = new Dictionary<string, Type>();
 
         private static Dictionary<Type, IDictionary<Type, MethodInfo>> AddMethodsByType { get; } = new Dictionary<Type, IDictionary<Type, MethodInfo>>();
@@ -27,7 +29,7 @@ namespace Autrage.LEX.NET.Serialization
 
         #region Methods
 
-        public static string GetNameFrom(Type type)
+        internal static string GetNameFrom(Type type)
         {
             type.AssertNotNull();
 
@@ -39,7 +41,7 @@ namespace Autrage.LEX.NET.Serialization
             return NamesByType[type];
         }
 
-        public static bool SkipConstructorOf(Type type)
+        internal static bool SkipConstructorOf(Type type)
         {
             type.AssertNotNull();
 
@@ -59,7 +61,7 @@ namespace Autrage.LEX.NET.Serialization
             return SkipConstructorOfType[type];
         }
 
-        public static IDictionary<string, FieldInfo> GetFieldsFrom(Type type)
+        internal static IDictionary<string, FieldInfo> GetFieldsFrom(Type type)
         {
             type.AssertNotNull();
 
@@ -95,7 +97,47 @@ namespace Autrage.LEX.NET.Serialization
             return FieldsByType[type];
         }
 
-        public static Type GetTypeFrom(string name, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver)
+        internal static IDictionary<string, PropertyInfo> GetPropertiesFrom(Type type)
+        {
+            type.AssertNotNull();
+
+            if (!PropertiesByType.ContainsKey(type))
+            {
+                try
+                {
+                    if (type.IsDefined(typeof(DataContractAttribute)))
+                    {
+                        PropertiesByType[type] =
+                            (from property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                             where property.IsDefined(typeof(DataMemberAttribute))
+                             where property.CanRead && property.CanWrite
+                             where !property.GetIndexParameters().Any()
+                             let name = property.Name
+                             select new { name, property })
+                             .ToDictionary(e => e.name, e => e.property);
+                    }
+                    else
+                    {
+                        PropertiesByType[type] =
+                            (from property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                             where property.CanRead && property.CanWrite
+                             where !property.GetIndexParameters().Any()
+                             let name = property.Name
+                             select new { name, property })
+                             .ToDictionary(e => e.name, e => e.property);
+                    }
+                }
+                catch (ArgumentException)
+                {
+                    Error($"Duplicate names found for fields in {type}!");
+                    throw;
+                }
+            }
+
+            return PropertiesByType[type];
+        }
+
+        internal static Type GetTypeFrom(string name, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver)
         {
             name.AssertNotNull();
 
@@ -107,7 +149,7 @@ namespace Autrage.LEX.NET.Serialization
             return TypesByName[name];
         }
 
-        public static IDictionary<Type, MethodInfo> GetAddMethodsFrom(Type type)
+        internal static IDictionary<Type, MethodInfo> GetAddMethodsFrom(Type type)
         {
             type.AssertNotNull();
 
@@ -129,7 +171,7 @@ namespace Autrage.LEX.NET.Serialization
             return AddMethodsByType[type];
         }
 
-        public static PropertyInfo GetCountPropertyFrom(Type type)
+        internal static PropertyInfo GetCountPropertyFrom(Type type)
         {
             type.AssertNotNull();
 

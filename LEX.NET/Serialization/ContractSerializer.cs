@@ -12,9 +12,9 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (!SerializeFields(stream, instance))
+            if (!SerializeMembers(stream, instance))
             {
-                Warning($"Could not serialize {instance.GetType()} instance fields!");
+                Warning($"Could not serialize {instance.GetType()} instance members!");
                 return false;
             }
 
@@ -26,9 +26,9 @@ namespace Autrage.LEX.NET.Serialization
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (!DeserializeFields(stream, instance))
+            if (!DeserializeMembers(stream, instance))
             {
-                Warning($"Could not deserialize {instance.GetType()} instance fields!");
+                Warning($"Could not deserialize {instance.GetType()} instance members!");
                 return false;
             }
 

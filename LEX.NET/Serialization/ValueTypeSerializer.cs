@@ -23,9 +23,9 @@ namespace Autrage.LEX.NET.Serialization
                 return false;
             }
 
-            if (!SerializeFields(stream, instance))
+            if (!SerializeMembers(stream, instance))
             {
-                Warning($"Could not serialize {type} instance fields!");
+                Warning($"Could not serialize {type} instance members!");
                 return false;
             }
 
@@ -50,9 +50,9 @@ namespace Autrage.LEX.NET.Serialization
 
             object instance = Instantiate(type);
 
-            if (!DeserializeFields(stream, instance))
+            if (!DeserializeMembers(stream, instance))
             {
-                Warning($"Could not deserialize {type} instance fields!");
+                Warning($"Could not deserialize {type} instance members!");
                 return type.GetDefault();
             }
 

@@ -35,11 +35,24 @@ namespace Autrage.LEX.NET.Serialization
             }
         }
 
-        private protected bool SerializeFields(Stream stream, object instance)
+        private protected bool SerializeMembers(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
 
+            return SerializeFields(stream, instance) && SerializeProperties(stream, instance);
+        }
+
+        private protected bool DeserializeMembers(Stream stream, object instance)
+        {
+            stream.AssertNotNull();
+            instance.AssertNotNull();
+
+            return DeserializeFields(stream, instance) && DeserializeProperties(stream, instance);
+        }
+
+        private bool SerializeFields(Stream stream, object instance)
+        {
             IDictionary<string, FieldInfo> fields = Cache.GetFieldsFrom(instance.GetType());
             if (fields == null)
             {
@@ -60,12 +73,32 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        private protected bool DeserializeFields(Stream stream, object instance)
+        private bool SerializeProperties(Stream stream, object instance)
         {
-            stream.AssertNotNull();
+            IDictionary<string, PropertyInfo> properties = Cache.GetPropertiesFrom(instance.GetType());
+            if (properties == null)
+            {
+                Warning($"Could not retrieve properties of {instance.GetType()} from cache!");
+                return false;
+            }
 
-            int? fieldCount = stream.ReadInt();
-            if (fieldCount == null)
+            stream.Write(properties.Count());
+
+            foreach (var (name, info) in properties)
+            {
+                stream.Write(name, Marshaller.Encoding);
+
+                // Recursive call to marshaller for cascading serialization
+                Marshaller.Serialize(stream, info.GetValue(instance));
+            }
+
+            return true;
+        }
+
+        private bool DeserializeFields(Stream stream, object instance)
+        {
+            int? count = stream.ReadInt();
+            if (count == null)
             {
                 Warning($"Could not read field count!");
                 return false;
@@ -73,7 +106,7 @@ namespace Autrage.LEX.NET.Serialization
 
             Type type = instance.GetType();
             IDictionary<string, FieldInfo> fields = Cache.GetFieldsFrom(type);
-            for (int i = 0; i < fieldCount; i++)
+            for (int i = 0; i < count; i++)
             {
                 string name = stream.ReadString(Marshaller.Encoding);
                 if (name == null)
@@ -94,6 +127,47 @@ namespace Autrage.LEX.NET.Serialization
                 if (!info.FieldType.IsInstanceOfType(value))
                 {
                     Log($"Deserialized value for field {type}.{name}, but value is not instance of field type {info.FieldType} - discarding value.");
+                    continue;
+                }
+
+                info.SetValue(instance, value);
+            }
+
+            return true;
+        }
+
+        private bool DeserializeProperties(Stream stream, object instance)
+        {
+            int? count = stream.ReadInt();
+            if (count == null)
+            {
+                Warning($"Could not read property count!");
+                return false;
+            }
+
+            Type type = instance.GetType();
+            IDictionary<string, PropertyInfo> properties = Cache.GetPropertiesFrom(type);
+            for (int i = 0; i < count; i++)
+            {
+                string name = stream.ReadString(Marshaller.Encoding);
+                if (name == null)
+                {
+                    Warning($"Could not read property name!");
+                    return false;
+                }
+
+                // Recursive call to marshaller for cascading deserialization
+                object value = Marshaller.Deserialize(stream);
+
+                PropertyInfo info = properties.GetValueOrDefault(name);
+                if (info == null)
+                {
+                    Log($"Deserialized value for property {type}.{name}, but failed to retrieve property info from cache - discarding value.");
+                    continue;
+                }
+                if (!info.PropertyType.IsInstanceOfType(value))
+                {
+                    Log($"Deserialized value for property {type}.{name}, but value is not instance of property type {info.PropertyType} - discarding value.");
                     continue;
                 }
 

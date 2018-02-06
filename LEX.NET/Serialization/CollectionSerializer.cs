@@ -51,6 +51,12 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             IDictionary<Type, MethodInfo> addMethods = Cache.GetAddMethodsFrom(instance.GetType());
+            if (addMethods == null || !addMethods.Any())
+            {
+                Warning($"Could not retrieve add methods for {instance.GetType()} collection instance!");
+                return false;
+            }
+
             for (int i = 0; i < count.Value; i++)
             {
                 // Recursive call to marshaller for cascading deserialization
