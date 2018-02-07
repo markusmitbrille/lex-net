@@ -12,6 +12,17 @@ namespace Autrage.LEX.NET.Serialization
             return Serializer.CreateMarshaller();
         }
 
+        public static IMarshaller Create(params Type[] serializers)
+        {
+            IMarshaller marshaller = Serializer.CreateMarshaller();
+            foreach (Type serializer in serializers)
+            {
+                marshaller.AddSerializer(serializer);
+            }
+
+            return marshaller;
+        }
+
         public static void Serialize(Stream stream, object instance, params Type[] serializers)
         {
             IMarshaller marshaller = Serializer.CreateMarshaller();
