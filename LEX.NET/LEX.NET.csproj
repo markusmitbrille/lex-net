@@ -64,7 +64,6 @@
     <Compile Include="Serialization\GenericCollectionSerializer.cs" />
     <Compile Include="Serialization\DictionarySerializer.cs" />
     <Compile Include="Serialization\EnumSerializer.cs" />
-    <Compile Include="Serialization\IMarshaller.cs" />
     <Compile Include="Extensions\KeyValuePairExtensions.cs" />
     <Compile Include="Serialization\ListSerializer.cs" />
     <Compile Include="Serialization\Marshaller.cs" />
