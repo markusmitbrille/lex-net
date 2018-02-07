@@ -36,7 +36,7 @@ namespace Autrage.LEX.NET.Serialization
 
         public static void Serialize<T>(Stream stream, T instance, params Type[] serializers)
         {
-            Serialize(stream, instance, serializers);
+            Serialize(stream, (object)instance, serializers);
         }
 
         public static object Deserialize(Stream stream, params Type[] serializers)
