@@ -64,7 +64,7 @@ namespace Autrage.LEX.NET.Serialization
             if (!CanHandle(type))
             {
                 Warning($"{GetType()} cannot handle type {type}!");
-                return false;
+                return null;
             }
 
             long? referenceID = stream.ReadLong();
