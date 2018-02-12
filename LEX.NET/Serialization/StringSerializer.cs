@@ -43,7 +43,7 @@ namespace Autrage.LEX.NET.Serialization
             if (!CanHandle(type))
             {
                 Warning($"{nameof(StringSerializer)} cannot handle type {type}!");
-                return false;
+                return null;
             }
 
             return stream.ReadString(Encoding);
