@@ -12,6 +12,8 @@ namespace Autrage.LEX.NET.Serialization
         #region Fields
 
         private Dictionary<object, long> referenceIDs = new Dictionary<object, long>(new ReferenceComparer());
+        private long nextID = 0;
+
         private Dictionary<long, object> references = new Dictionary<long, object>();
 
         #endregion Fields
@@ -39,7 +41,7 @@ namespace Autrage.LEX.NET.Serialization
                 return true;
             }
 
-            long referenceID = referenceIDs.Count == 0 ? 0 : referenceIDs.Max(e => e.Value) + 1;
+            long referenceID = nextID++;
             referenceIDs[instance] = referenceID;
             stream.Write(referenceID);
             stream.Write(true);
