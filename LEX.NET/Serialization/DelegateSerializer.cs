@@ -115,7 +115,7 @@ namespace Autrage.LEX.NET.Serialization
             {
                 if (instance == null)
                 {
-                    Warning($"Neither payload nor already restored reference found for {type}!");
+                    Warning($"Neither payload nor already restored reference found for {type} ({referenceID})!");
                 }
 
                 return instance;

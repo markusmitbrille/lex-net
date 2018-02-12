@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
@@ -75,11 +74,6 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             object instance = references.GetValueOrDefault(referenceID.Value);
-            if (instance == null)
-            {
-                instance = Instantiate(type);
-                references[referenceID.Value] = instance;
-            }
 
             bool? hasPayload = stream.ReadBool();
             if (hasPayload == null)
@@ -87,11 +81,25 @@ namespace Autrage.LEX.NET.Serialization
                 Warning($"Could not read {type} payload indicator!");
                 return null;
             }
-
-            if (hasPayload == true && !DeserializePayload(stream, instance))
+            if (hasPayload == false)
             {
-                Warning($"Could not deserialize {type} payload!");
-                return null;
+                if (instance == null)
+                {
+                    Warning($"Neither payload nor already restored reference found for {type} ({referenceID})!");
+                }
+
+                return instance;
+            }
+
+            if (instance == null)
+            {
+                instance = Instantiate(type);
+                references[referenceID.Value] = instance;
+            }
+
+            if (!DeserializePayload(stream, instance))
+            {
+                Log($"Could not deserialize {type} payload!");
             }
 
             return instance;
