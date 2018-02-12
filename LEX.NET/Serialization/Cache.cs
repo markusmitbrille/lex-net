@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using System.Runtime.CompilerServices;
 using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
@@ -72,8 +72,8 @@ namespace Autrage.LEX.NET.Serialization
                     if (type.IsDefined(typeof(DataContractAttribute)))
                     {
                         FieldsByType[type] =
-                            (from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                             where field.IsDefined(typeof(DataMemberAttribute))
+                            (from field in GetInstanceFields(type)
+                             where IsDataMember(field) || IsEventBackingField(field)
                              let name = field.Name
                              select new { name, field })
                              .ToDictionary(e => e.name, e => e.field);
@@ -81,7 +81,8 @@ namespace Autrage.LEX.NET.Serialization
                     else
                     {
                         FieldsByType[type] =
-                            (from field in type.GetFields(BindingFlags.Instance | BindingFlags.Public)
+                            (from field in GetInstanceFields(type)
+                             where field.IsPublic || IsEventBackingField(field)
                              let name = field.Name
                              select new { name, field })
                              .ToDictionary(e => e.name, e => e.field);
@@ -96,6 +97,12 @@ namespace Autrage.LEX.NET.Serialization
 
             return FieldsByType[type];
         }
+
+        private static FieldInfo[] GetInstanceFields(Type type) => type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        private static bool IsDataMember(FieldInfo field) => field.IsDefined(typeof(DataMemberAttribute));
+
+        private static bool IsEventBackingField(FieldInfo field) => field.IsDefined(typeof(CompilerGeneratedAttribute)) && typeof(MulticastDelegate).IsAssignableFrom(field.FieldType);
 
         internal static IDictionary<string, PropertyInfo> GetPropertiesFrom(Type type)
         {
