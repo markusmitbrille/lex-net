@@ -5,8 +5,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class ContractSerializer : ReferenceTypeSerializer
     {
-        #region Methods
-
         protected override bool SerializePayload(Stream stream, object instance)
         {
             stream.AssertNotNull();
@@ -34,7 +32,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return true;
         }
-
-        #endregion Methods
     }
 }

@@ -11,8 +11,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class GenericCollectionSerializer : ReferenceTypeSerializer
     {
-        #region Methods
-
         public override bool CanHandle(Type type) => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
 
         protected override bool SerializePayload(Stream stream, object instance)
@@ -74,7 +72,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return true;
         }
-
-        #endregion Methods
     }
 }

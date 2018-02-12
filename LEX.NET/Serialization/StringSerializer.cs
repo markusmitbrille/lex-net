@@ -9,13 +9,7 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class StringSerializer : Serializer
     {
-        #region Properties
-
         public Encoding Encoding { get; set; } = Encoding.UTF8;
-
-        #endregion Properties
-
-        #region Methods
 
         public override bool CanHandle(Type type) => type == typeof(string);
 
@@ -48,7 +42,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return stream.ReadString(Encoding);
         }
-
-        #endregion Methods
     }
 }

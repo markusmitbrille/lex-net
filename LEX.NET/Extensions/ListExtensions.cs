@@ -4,8 +4,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class ListExtensions
     {
-        #region Methods
-
         public static T Dequeue<T>(this List<T> source)
         {
             source.AssertNotNull(nameof(source));
@@ -102,7 +100,5 @@ namespace Autrage.LEX.NET.Extensions
         {
             return source.Swap(index, index - 1);
         }
-
-        #endregion Methods
     }
 }

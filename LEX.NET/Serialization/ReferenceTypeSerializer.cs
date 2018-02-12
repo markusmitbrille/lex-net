@@ -8,16 +8,10 @@ namespace Autrage.LEX.NET.Serialization
 {
     public abstract class ReferenceTypeSerializer : ObjectSerializer
     {
-        #region Fields
-
         private Dictionary<object, long> referenceIDs = new Dictionary<object, long>(new ReferenceComparer());
         private long nextID = 0;
 
         private Dictionary<long, object> references = new Dictionary<long, object>();
-
-        #endregion Fields
-
-        #region Methods
 
         public override bool CanHandle(Type type) => type.IsClass;
 
@@ -108,7 +102,5 @@ namespace Autrage.LEX.NET.Serialization
         protected abstract bool SerializePayload(Stream stream, object instance);
 
         protected abstract bool DeserializePayload(Stream stream, object instance);
-
-        #endregion Methods
     }
 }

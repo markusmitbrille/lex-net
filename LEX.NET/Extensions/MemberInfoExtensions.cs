@@ -5,8 +5,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class MemberInfoExtensions
     {
-        #region Methods
-
         public static Type GetFieldOrPropertyType(this MemberInfo member)
         {
             member.AssertNotNull();
@@ -56,7 +54,5 @@ namespace Autrage.LEX.NET.Extensions
 
             throw new Exception($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
         }
-
-        #endregion Methods
     }
 }

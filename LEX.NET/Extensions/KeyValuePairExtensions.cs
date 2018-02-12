@@ -4,8 +4,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class KeyValuePairExtensions
     {
-        #region Methods
-
         public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
         {
             pair.AssertNotNull();
@@ -13,7 +11,5 @@ namespace Autrage.LEX.NET.Extensions
             key = pair.Key;
             value = pair.Value;
         }
-
-        #endregion Methods
     }
 }

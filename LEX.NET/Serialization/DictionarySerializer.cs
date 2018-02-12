@@ -9,8 +9,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class DictionarySerializer : ReferenceTypeSerializer
     {
-        #region Methods
-
         public override bool CanHandle(Type type) => type.GetInterfaces().Any(i => i == typeof(IDictionary));
 
         protected override bool SerializePayload(Stream stream, object instance)
@@ -80,7 +78,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return true;
         }
-
-        #endregion Methods
     }
 }

@@ -4,8 +4,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class StackExtensions
     {
-        #region Methods
-
         public static void PushAll<T>(this Stack<T> stack, IEnumerable<T> items)
         {
             stack.AssertNotNull(nameof(stack));
@@ -23,7 +21,5 @@ namespace Autrage.LEX.NET.Extensions
 
             return stack.Count > 0 ? stack.Pop() : default;
         }
-
-        #endregion Methods
     }
 }

@@ -9,8 +9,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     internal static class Cache
     {
-        #region Properties
-
         private static Dictionary<Type, string> NamesByType { get; } = new Dictionary<Type, string>();
 
         private static Dictionary<Type, bool> SkipConstructorOfType { get; } = new Dictionary<Type, bool>();
@@ -24,10 +22,6 @@ namespace Autrage.LEX.NET.Serialization
         private static Dictionary<Type, IDictionary<Type, MethodInfo>> AddMethodsByType { get; } = new Dictionary<Type, IDictionary<Type, MethodInfo>>();
 
         private static Dictionary<Type, PropertyInfo> CountPropertiesByType { get; } = new Dictionary<Type, PropertyInfo>();
-
-        #endregion Properties
-
-        #region Methods
 
         internal static string GetNameFrom(Type type)
         {
@@ -97,12 +91,6 @@ namespace Autrage.LEX.NET.Serialization
 
             return FieldsByType[type];
         }
-
-        private static FieldInfo[] GetInstanceFields(Type type) => type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        private static bool IsDataMember(FieldInfo field) => field.IsDefined(typeof(DataMemberAttribute));
-
-        private static bool IsEventBackingField(FieldInfo field) => field.IsDefined(typeof(CompilerGeneratedAttribute)) && typeof(MulticastDelegate).IsAssignableFrom(field.FieldType);
 
         internal static IDictionary<string, PropertyInfo> GetPropertiesFrom(Type type)
         {
@@ -190,6 +178,10 @@ namespace Autrage.LEX.NET.Serialization
             return CountPropertiesByType[type];
         }
 
-        #endregion Methods
+        private static FieldInfo[] GetInstanceFields(Type type) => type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        private static bool IsDataMember(FieldInfo field) => field.IsDefined(typeof(DataMemberAttribute));
+
+        private static bool IsEventBackingField(FieldInfo field) => field.IsDefined(typeof(CompilerGeneratedAttribute)) && typeof(MulticastDelegate).IsAssignableFrom(field.FieldType);
     }
 }

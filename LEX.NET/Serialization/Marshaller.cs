@@ -11,21 +11,11 @@ namespace Autrage.LEX.NET.Serialization
 {
     public class Marshaller
     {
-        #region Fields
-
         private List<Serializer> serializers = new List<Serializer>();
-
-        #endregion Fields
-
-        #region Properties
 
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         public Func<AssemblyName, Assembly> AssemblyResolver { get; set; }
         public Func<Assembly, string, bool, Type> TypeResolver { get; set; }
-
-        #endregion Properties
-
-        #region Constructors
 
         public Marshaller(params Serializer[] serializers)
         {
@@ -38,10 +28,6 @@ namespace Autrage.LEX.NET.Serialization
         private Marshaller()
         {
         }
-
-        #endregion Constructors
-
-        #region Methods
 
         public static void Serialize(Stream stream, object instance, params Serializer[] serializers)
         {
@@ -210,7 +196,5 @@ namespace Autrage.LEX.NET.Serialization
             serializer.Marshaller = this;
             serializers.Add(serializer);
         }
-
-        #endregion Methods
     }
 }

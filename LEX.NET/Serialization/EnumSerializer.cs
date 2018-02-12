@@ -8,8 +8,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class EnumSerializer : Serializer
     {
-        #region Methods
-
         public override bool CanHandle(Type type) => type.IsEnum || (Nullable.GetUnderlyingType(type)?.IsEnum ?? false);
 
         public override bool Serialize(Stream stream, object instance)
@@ -143,7 +141,5 @@ namespace Autrage.LEX.NET.Serialization
                 return Enum.ToObject(type, instance);
             }
         }
-
-        #endregion Methods
     }
 }

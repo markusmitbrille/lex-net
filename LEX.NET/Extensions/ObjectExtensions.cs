@@ -7,8 +7,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class ObjectExtensions
     {
-        #region Methods
-
         public static void Print(this object obj, bool instances = true, bool statics = false, bool publics = true, bool nonPublics = false)
         {
             obj.AssertNotNull(nameof(obj));
@@ -107,7 +105,5 @@ namespace Autrage.LEX.NET.Extensions
             }
             Console.WriteLine();
         }
-
-        #endregion Methods
     }
 }

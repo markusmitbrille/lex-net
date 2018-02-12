@@ -6,8 +6,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class StreamExtensions
     {
-        #region Methods
-
         public static void Reset(this Stream stream)
         {
             stream.AssertNotNull(nameof(stream));
@@ -392,7 +390,5 @@ namespace Autrage.LEX.NET.Extensions
 
             return stream;
         }
-
-        #endregion Methods
     }
 }

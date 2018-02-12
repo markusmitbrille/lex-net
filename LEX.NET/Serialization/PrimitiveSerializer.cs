@@ -8,8 +8,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class PrimitiveSerializer : Serializer
     {
-        #region Methods
-
         public override bool CanHandle(Type type) => type.IsPrimitive || (Nullable.GetUnderlyingType(type)?.IsPrimitive ?? false);
 
         public override bool Serialize(Stream stream, object instance)
@@ -174,7 +172,5 @@ namespace Autrage.LEX.NET.Serialization
                 return instance;
             }
         }
-
-        #endregion Methods
     }
 }

@@ -2,14 +2,8 @@
 {
     public static class MathUtils
     {
-        #region Fields
-
         private const int HashCodeCombinationPrime1 = 17;
         private const int HashCodeCombinationPrime2 = 31;
-
-        #endregion Fields
-
-        #region Methods
 
         /// <summary>
         /// Combines mutliple hashcodes into one.
@@ -73,7 +67,5 @@
             }
             return number;
         }
-
-        #endregion Methods
     }
 }

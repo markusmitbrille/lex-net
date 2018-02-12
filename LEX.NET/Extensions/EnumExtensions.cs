@@ -5,8 +5,6 @@ namespace Autrage.LEX.NET.Extensions
 {
     public static class EnumExtensions
     {
-        #region Methods
-
         /// <summary>
         /// Splits a flags enum value into its atmoic flags and returns them as an IEnumerable of integers.
         /// </summary>
@@ -27,7 +25,5 @@ namespace Autrage.LEX.NET.Extensions
                 }
             }
         }
-
-        #endregion Methods
     }
 }

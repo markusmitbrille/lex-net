@@ -11,8 +11,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public abstract class ObjectSerializer : Serializer
     {
-        #region Methods
-
         private protected static object Instantiate(Type type)
         {
             type.AssertNotNull();
@@ -176,7 +174,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return true;
         }
-
-        #endregion Methods
     }
 }

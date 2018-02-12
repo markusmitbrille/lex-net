@@ -6,15 +6,9 @@ namespace Autrage.LEX.NET
 {
     public static class DebugUtils
     {
-        #region Fields
-
         public const string LogCategory = "LOG";
         public const string WarningCategory = "WARNING";
         public const string ErrorCategory = "ERROR";
-
-        #endregion Fields
-
-        #region Methods
 
         /// <summary>
         /// Asserts that a certain condition is met, otherwise an <see cref="AssertionException"/> is thrown.
@@ -144,18 +138,12 @@ namespace Autrage.LEX.NET
             message = message == null ? "" : $": {message}";
             return $"{file}({caller}, {line}) [{DateTime.Now}]{message}";
         }
-
-        #endregion Methods
     }
 
     public class AssertionException : Exception
     {
-        #region Constructors
-
         public AssertionException(string message) : base(message)
         {
         }
-
-        #endregion Constructors
     }
 }

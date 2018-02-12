@@ -11,22 +11,12 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class DelegateSerializer : Serializer
     {
-        #region Fields
-
         private Dictionary<MulticastDelegate, long> referenceIDs = new Dictionary<MulticastDelegate, long>(new ReferenceComparer());
         private long nextID = 0;
 
         private Dictionary<long, MulticastDelegate> references = new Dictionary<long, MulticastDelegate>();
 
-        #endregion Fields
-
-        #region Properties
-
         private static CSharpCodeProvider Provider { get; } = new CSharpCodeProvider();
-
-        #endregion Properties
-
-        #region Methods
 
         public override bool CanHandle(Type type) => typeof(MulticastDelegate).IsAssignableFrom(type);
 
@@ -198,7 +188,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return instance;
         }
-
-        #endregion Methods
     }
 }

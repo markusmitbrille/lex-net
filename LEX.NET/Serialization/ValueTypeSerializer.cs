@@ -7,8 +7,6 @@ namespace Autrage.LEX.NET.Serialization
 {
     public sealed class ValueTypeSerializer : ObjectSerializer
     {
-        #region Methods
-
         public override bool CanHandle(Type type) => type.IsValueType;
 
         public override bool Serialize(Stream stream, object instance)
@@ -58,7 +56,5 @@ namespace Autrage.LEX.NET.Serialization
 
             return instance;
         }
-
-        #endregion Methods
     }
 }
