@@ -36,7 +36,7 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        protected override bool DeserializePayload(Stream stream, object instance)
+        protected override void DeserializePayload(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
@@ -45,14 +45,14 @@ namespace Autrage.LEX.NET.Serialization
             if (count == null)
             {
                 Warning($"Could not read collection count!");
-                return false;
+                return;
             }
 
             IDictionary<Type, MethodInfo> addMethods = Cache.GetAddMethodsFrom(instance.GetType());
             if (addMethods == null || !addMethods.Any())
             {
                 Warning($"Could not retrieve add methods for {instance.GetType()} collection instance!");
-                return false;
+                return;
             }
 
             for (int i = 0; i < count.Value; i++)
@@ -69,8 +69,6 @@ namespace Autrage.LEX.NET.Serialization
 
                 addMethod.Invoke(instance, new object[] { item });
             }
-
-            return true;
         }
     }
 }

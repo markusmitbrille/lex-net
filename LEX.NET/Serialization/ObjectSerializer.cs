@@ -41,12 +41,13 @@ namespace Autrage.LEX.NET.Serialization
             return SerializeFields(stream, instance) && SerializeProperties(stream, instance);
         }
 
-        private protected bool DeserializeMembers(Stream stream, object instance)
+        private protected void DeserializeMembers(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            return DeserializeFields(stream, instance) && DeserializeProperties(stream, instance);
+            DeserializeFields(stream, instance);
+            DeserializeProperties(stream, instance);
         }
 
         private bool SerializeFields(Stream stream, object instance)
@@ -93,13 +94,13 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        private bool DeserializeFields(Stream stream, object instance)
+        private void DeserializeFields(Stream stream, object instance)
         {
             int? count = stream.ReadInt();
             if (count == null)
             {
                 Warning($"Could not read field count!");
-                return false;
+                return;
             }
 
             Type type = instance.GetType();
@@ -110,7 +111,7 @@ namespace Autrage.LEX.NET.Serialization
                 if (name == null)
                 {
                     Warning($"Could not read field name!");
-                    return false;
+                    return;
                 }
 
                 // Recursive call to marshaller for cascading deserialization
@@ -130,17 +131,15 @@ namespace Autrage.LEX.NET.Serialization
 
                 info.SetValue(instance, value);
             }
-
-            return true;
         }
 
-        private bool DeserializeProperties(Stream stream, object instance)
+        private void DeserializeProperties(Stream stream, object instance)
         {
             int? count = stream.ReadInt();
             if (count == null)
             {
                 Warning($"Could not read property count!");
-                return false;
+                return;
             }
 
             Type type = instance.GetType();
@@ -151,7 +150,7 @@ namespace Autrage.LEX.NET.Serialization
                 if (name == null)
                 {
                     Warning($"Could not read property name!");
-                    return false;
+                    return;
                 }
 
                 // Recursive call to marshaller for cascading deserialization
@@ -171,8 +170,6 @@ namespace Autrage.LEX.NET.Serialization
 
                 info.SetValue(instance, value);
             }
-
-            return true;
         }
     }
 }

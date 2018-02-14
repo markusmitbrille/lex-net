@@ -29,7 +29,7 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        protected override bool DeserializePayload(Stream stream, object instance)
+        protected override void DeserializePayload(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
@@ -38,7 +38,7 @@ namespace Autrage.LEX.NET.Serialization
             if (count == null)
             {
                 Warning($"Could not read collection count!");
-                return false;
+                return;
             }
 
             IList list = (IList)instance;
@@ -56,8 +56,6 @@ namespace Autrage.LEX.NET.Serialization
                     throw;
                 }
             }
-
-            return true;
         }
     }
 }

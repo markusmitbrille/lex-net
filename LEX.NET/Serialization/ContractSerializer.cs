@@ -19,18 +19,12 @@ namespace Autrage.LEX.NET.Serialization
             return true;
         }
 
-        protected override bool DeserializePayload(Stream stream, object instance)
+        protected override void DeserializePayload(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
 
-            if (!DeserializeMembers(stream, instance))
-            {
-                Warning($"Could not deserialize {instance.GetType()} instance members!");
-                return false;
-            }
-
-            return true;
+            DeserializeMembers(stream, instance);
         }
     }
 }

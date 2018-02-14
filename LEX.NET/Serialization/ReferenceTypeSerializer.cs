@@ -67,33 +67,23 @@ namespace Autrage.LEX.NET.Serialization
                 return null;
             }
 
-            object instance = references.GetValueOrDefault(referenceID.Value);
-
             bool? hasPayload = stream.ReadBool();
             if (hasPayload == null)
             {
                 Warning($"Could not read {type} payload indicator!");
                 return null;
             }
-            if (hasPayload == false)
-            {
-                if (instance == null)
-                {
-                    Warning($"Neither payload nor already restored reference found for {type} ({referenceID})!");
-                }
 
-                return instance;
-            }
-
+            object instance = references.GetValueOrDefault(referenceID.Value);
             if (instance == null)
             {
                 instance = Instantiate(type);
                 references[referenceID.Value] = instance;
             }
 
-            if (!DeserializePayload(stream, instance))
+            if (hasPayload == true)
             {
-                Log($"Could not deserialize {type} payload!");
+                DeserializePayload(stream, instance);
             }
 
             return instance;
@@ -101,6 +91,6 @@ namespace Autrage.LEX.NET.Serialization
 
         protected abstract bool SerializePayload(Stream stream, object instance);
 
-        protected abstract bool DeserializePayload(Stream stream, object instance);
+        protected abstract void DeserializePayload(Stream stream, object instance);
     }
 }

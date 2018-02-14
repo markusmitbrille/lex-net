@@ -48,11 +48,7 @@ namespace Autrage.LEX.NET.Serialization
 
             object instance = Instantiate(type);
 
-            if (!DeserializeMembers(stream, instance))
-            {
-                Warning($"Could not deserialize {type} instance members!");
-                return type.GetDefault();
-            }
+            DeserializeMembers(stream, instance);
 
             return instance;
         }
