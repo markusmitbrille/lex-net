@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using static Autrage.LEX.NET.DebugUtils;
+using static Autrage.LEX.NET.Bugger;
 
 namespace Autrage.LEX.NET.Serialization
 {

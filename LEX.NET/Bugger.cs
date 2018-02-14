@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Autrage.LEX.NET
 {
-    public static class DebugUtils
+    public static class Bugger
     {
         public const string LogCategory = "LOG";
         public const string WarningCategory = "WARNING";

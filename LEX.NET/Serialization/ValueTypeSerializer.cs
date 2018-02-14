@@ -1,7 +1,7 @@
 ﻿using Autrage.LEX.NET.Extensions;
 using System;
 using System.IO;
-using static Autrage.LEX.NET.DebugUtils;
+using static Autrage.LEX.NET.Bugger;
 
 namespace Autrage.LEX.NET.Serialization
 {

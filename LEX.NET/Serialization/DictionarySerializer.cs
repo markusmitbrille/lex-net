@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
-using static Autrage.LEX.NET.DebugUtils;
+using static Autrage.LEX.NET.Bugger;
 
 namespace Autrage.LEX.NET.Serialization
 {
