@@ -11,7 +11,7 @@ namespace Autrage.LEX.NET.Serialization
 {
     public abstract class ObjectSerializer : Serializer
     {
-        private protected static object Instantiate(Type type)
+        protected static object Instantiate(Type type)
         {
             type.AssertNotNull();
 
@@ -33,7 +33,7 @@ namespace Autrage.LEX.NET.Serialization
             }
         }
 
-        private protected bool SerializeMembers(Stream stream, object instance)
+        protected bool SerializeMembers(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
@@ -41,7 +41,7 @@ namespace Autrage.LEX.NET.Serialization
             return SerializeFields(stream, instance) && SerializeProperties(stream, instance);
         }
 
-        private protected void DeserializeMembers(Stream stream, object instance)
+        protected void DeserializeMembers(Stream stream, object instance)
         {
             stream.AssertNotNull();
             instance.AssertNotNull();
