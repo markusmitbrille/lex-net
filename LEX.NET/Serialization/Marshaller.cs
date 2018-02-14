@@ -1,5 +1,6 @@
 ﻿using Autrage.LEX.NET.Extensions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ using static Autrage.LEX.NET.DebugUtils;
 
 namespace Autrage.LEX.NET.Serialization
 {
-    public class Marshaller
+    public sealed class Marshaller : IEnumerable<Serializer>, IEnumerable
     {
         private List<Serializer> serializers = new List<Serializer>();
 
@@ -17,16 +18,10 @@ namespace Autrage.LEX.NET.Serialization
         public Func<AssemblyName, Assembly> AssemblyResolver { get; set; }
         public Func<Assembly, string, bool, Type> TypeResolver { get; set; }
 
-        public Marshaller(params Serializer[] serializers)
+        public void Add(Serializer serializer)
         {
-            foreach (Serializer serializer in serializers)
-            {
-                AddSerializer(serializer);
-            }
-        }
-
-        private Marshaller()
-        {
+            serializer.Marshaller = this;
+            serializers.Add(serializer);
         }
 
         public static void Serialize(Stream stream, object instance, params Serializer[] serializers)
@@ -34,7 +29,7 @@ namespace Autrage.LEX.NET.Serialization
             Marshaller marshaller = new Marshaller();
             foreach (Serializer serializer in serializers)
             {
-                marshaller.AddSerializer(serializer);
+                marshaller.Add(serializer);
             }
 
             marshaller.Serialize(stream, instance);
@@ -45,7 +40,7 @@ namespace Autrage.LEX.NET.Serialization
             Marshaller marshaller = new Marshaller();
             foreach (Serializer serializer in serializers)
             {
-                marshaller.AddSerializer(serializer);
+                marshaller.Add(serializer);
             }
 
             return marshaller.Deserialize(stream);
@@ -191,10 +186,8 @@ namespace Autrage.LEX.NET.Serialization
             }
         }
 
-        private void AddSerializer(Serializer serializer)
-        {
-            serializer.Marshaller = this;
-            serializers.Add(serializer);
-        }
+        public IEnumerator<Serializer> GetEnumerator() => serializers.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => serializers.GetEnumerator();
     }
 }
