@@ -19,7 +19,7 @@ namespace Autrage.LEX.NET.Extensions
         {
             stack.AssertNotNull(nameof(stack));
 
-            return stack.Count > 0 ? stack.Pop() : default;
+            return stack.Count > 0 ? stack.Pop() : default(T);
         }
     }
 }

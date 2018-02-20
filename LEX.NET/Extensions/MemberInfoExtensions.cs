@@ -9,13 +9,13 @@ namespace Autrage.LEX.NET.Extensions
         {
             member.AssertNotNull();
 
-            if (member is FieldInfo field)
+            if (member is FieldInfo)
             {
-                return field.FieldType;
+                return ((FieldInfo)member).FieldType;
             }
-            if (member is PropertyInfo property)
+            if (member is PropertyInfo)
             {
-                return property.PropertyType;
+                return ((PropertyInfo)member).PropertyType;
             }
 
             throw new Exception($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
@@ -25,13 +25,13 @@ namespace Autrage.LEX.NET.Extensions
         {
             member.AssertNotNull();
 
-            if (member is FieldInfo field)
+            if (member is FieldInfo)
             {
-                return field.GetValue(obj);
+                return ((FieldInfo)member).GetValue(obj);
             }
-            if (member is PropertyInfo property)
+            if (member is PropertyInfo)
             {
-                return property.GetValue(obj);
+                return ((PropertyInfo)member).GetValue(obj);
             }
 
             throw new Exception($"{nameof(member)} must be either {nameof(FieldInfo)} or {nameof(PropertyInfo)}!");
@@ -41,14 +41,14 @@ namespace Autrage.LEX.NET.Extensions
         {
             member.AssertNotNull();
 
-            if (member is FieldInfo field)
+            if (member is FieldInfo)
             {
-                field.SetValue(obj, value);
+                ((FieldInfo)member).SetValue(obj, value);
                 return;
             }
-            if (member is PropertyInfo property)
+            if (member is PropertyInfo)
             {
-                property.SetValue(obj, value);
+                ((PropertyInfo)member).SetValue(obj, value);
                 return;
             }
 

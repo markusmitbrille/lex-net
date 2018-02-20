@@ -85,7 +85,8 @@ namespace Autrage.LEX.NET.Serialization
                 return type.GetDefault();
             }
 
-            if (Nullable.GetUnderlyingType(type) is Type nullableUnderlyingType)
+            Type nullableUnderlyingType = Nullable.GetUnderlyingType(type);
+            if (nullableUnderlyingType != null)
             {
                 type = nullableUnderlyingType;
             }

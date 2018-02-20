@@ -8,7 +8,8 @@ namespace Autrage.LEX.NET.Extensions
         {
             source.AssertNotNull(nameof(source));
 
-            source.TryGetValue(key, out TValue value);
+            TValue value;
+            source.TryGetValue(key, out value);
             return value;
         }
     }

@@ -48,13 +48,14 @@ namespace Autrage.LEX.NET.Serialization
 
         public static T Deserialize<T>(Stream stream, params Serializer[] serializers)
         {
-            if (Deserialize(stream, serializers) is T instance)
+            object instance = Deserialize(stream, serializers);
+            if (instance is T)
             {
-                return instance;
+                return (T)instance;
             }
             else
             {
-                return default;
+                return default(T);
             }
         }
 
@@ -176,13 +177,14 @@ namespace Autrage.LEX.NET.Serialization
 
         public T Deserialize<T>(Stream stream)
         {
-            if (Deserialize(stream) is T instance)
+            object instance = Deserialize(stream);
+            if (instance is T)
             {
-                return instance;
+                return (T)instance;
             }
             else
             {
-                return default;
+                return default(T);
             }
         }
 

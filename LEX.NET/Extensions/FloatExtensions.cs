@@ -12,7 +12,7 @@ namespace Autrage.LEX.NET.Extensions
         public static bool IsBetween(this float value, float bound1, float bound2) =>
                bound1 < bound2 ? bound1 < value && value < bound2 : bound2 < value && value < bound1;
 
-        public static double Clamp(ref this float value, float bound1, float bound2)
+        public static double Clamp(/* ref */ this float value, float bound1, float bound2)
         {
             float min = Math.Min(bound1, bound2);
             float max = Math.Max(bound1, bound2);
@@ -31,7 +31,7 @@ namespace Autrage.LEX.NET.Extensions
             }
         }
 
-        public static float Clamp01(ref this float value)
+        public static float Clamp01(/* ref */ this float value)
         {
             if (value < 0)
             {
