@@ -61,8 +61,11 @@ namespace Autrage.LEX.NET.Serialization
 
             stream.Write(fields.Count());
 
-            foreach (var (name, info) in fields)
+            foreach (/* var (name, info) */ var field in fields)
             {
+                var name = field.Key;
+                var info = field.Value;
+
                 stream.Write(name, Marshaller.Encoding);
 
                 // Recursive call to marshaller for cascading serialization
@@ -83,8 +86,11 @@ namespace Autrage.LEX.NET.Serialization
 
             stream.Write(properties.Count());
 
-            foreach (var (name, info) in properties)
+            foreach (/* var (name, info) */ var field in properties)
             {
+                var name = field.Key;
+                var info = field.Value;
+
                 stream.Write(name, Marshaller.Encoding);
 
                 // Recursive call to marshaller for cascading serialization

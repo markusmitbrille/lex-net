@@ -38,14 +38,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 1;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return buffer[0];
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (byte?)buffer[0];
         }
 
         public static sbyte? ReadSByte(this Stream stream)
@@ -53,14 +47,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 1;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return (sbyte)buffer[0];
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (sbyte?)buffer[0];
         }
 
         public static short? ReadShort(this Stream stream)
@@ -68,14 +56,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 2;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToInt16(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (short?)BitConverter.ToInt16(buffer, 0);
         }
 
         public static int? ReadInt(this Stream stream)
@@ -83,14 +65,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 4;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToInt32(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (int?)BitConverter.ToInt32(buffer, 0);
         }
 
         public static long? ReadLong(this Stream stream)
@@ -98,14 +74,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 8;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToInt64(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (long?)BitConverter.ToInt64(buffer, 0);
         }
 
         public static ushort? ReadUShort(this Stream stream)
@@ -113,14 +83,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 2;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToUInt16(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (ushort?)BitConverter.ToUInt16(buffer, 0);
         }
 
         public static uint? ReadUInt(this Stream stream)
@@ -128,14 +92,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 4;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToUInt32(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (uint?)BitConverter.ToUInt32(buffer, 0);
         }
 
         public static ulong? ReadULong(this Stream stream)
@@ -143,14 +101,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 8;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToUInt64(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (ulong?)BitConverter.ToUInt64(buffer, 0);
         }
 
         public static float? ReadFloat(this Stream stream)
@@ -158,14 +110,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 4;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToSingle(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (float?)BitConverter.ToSingle(buffer, 0);
         }
 
         public static double? ReadDouble(this Stream stream)
@@ -173,35 +119,31 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 8;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToDouble(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (double?)BitConverter.ToDouble(buffer, 0);
         }
 
         public static decimal? ReadDecimal(this Stream stream)
         {
             stream.AssertNotNull(nameof(stream));
 
-            if (!(stream.ReadInt() is int count))
+            int? count = stream.ReadInt();
+            if (count == null)
             {
                 return null;
             }
 
-            int[] bits = new int[count];
+            int[] bits = new int[count.Value];
             for (int i = 0; i < count; i++)
             {
-                if (stream.ReadInt() is int bit)
+                int? bit = stream.ReadInt();
+                if (bit == null)
                 {
-                    bits[i] = bit;
+                    return null;
                 }
                 else
                 {
-                    return null;
+                    bits[i] = bit.Value;
                 }
             }
 
@@ -213,14 +155,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 1;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToBoolean(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (bool?)BitConverter.ToBoolean(buffer, 0);
         }
 
         public static char? ReadChar(this Stream stream)
@@ -228,14 +164,8 @@ namespace Autrage.LEX.NET.Extensions
             stream.AssertNotNull(nameof(stream));
 
             const int length = 2;
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return BitConverter.ToChar(buffer, 0);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length);
+            return buffer == null ? null : (char?)BitConverter.ToChar(buffer, 0);
         }
 
         public static string ReadString(this Stream stream) => ReadString(stream, Encoding.UTF8);
@@ -244,19 +174,14 @@ namespace Autrage.LEX.NET.Extensions
         {
             stream.AssertNotNull(nameof(stream));
 
-            if (!(stream.ReadInt() is int length))
+            int? length = stream.ReadInt();
+            if (length == null)
             {
                 return null;
             }
 
-            if (stream.Read(length) is byte[] buffer)
-            {
-                return encoding.GetString(buffer);
-            }
-            else
-            {
-                return null;
-            }
+            byte[] buffer = stream.Read(length.Value);
+            return buffer == null ? null : encoding.GetString(buffer);
         }
 
         public static Stream Write(this Stream stream, byte[] buffer)
