@@ -69,7 +69,7 @@ namespace Autrage.LEX.NET.Extensions
 
         private static void PrintProperties(object obj, BindingFlags bindingFlags)
         {
-            IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties(bindingFlags).Where(p => p.CanRead && !p.GetIndexParameters().Any());
+            IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties(bindingFlags).Where(p => p.CanRead && p.GetIndexParameters().None());
             if (properties.Count() == 0)
             {
                 return;

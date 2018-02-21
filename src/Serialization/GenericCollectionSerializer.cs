@@ -49,7 +49,7 @@ namespace Autrage.LEX.NET.Serialization
             }
 
             IDictionary<Type, MethodInfo> addMethods = Cache.GetAddMethodsFrom(instance.GetType());
-            if (addMethods == null || !addMethods.Any())
+            if (addMethods == null || addMethods.None())
             {
                 Warning($"Could not retrieve add methods for {instance.GetType()} collection instance!");
                 return;

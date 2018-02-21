@@ -16,7 +16,7 @@ namespace Autrage.LEX.NET.Extensions
             }
         }
 
-        public static bool None<T>(this IEnumerable<T> source) => !source.Any();
+        public static bool None<T>(this IEnumerable<T> source) => source.None();
 
         public static bool None<T>(this IEnumerable<T> source, Predicate<T> predicate) => source.All(e => !predicate(e));
     }

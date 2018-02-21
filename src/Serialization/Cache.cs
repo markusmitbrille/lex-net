@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Autrage.LEX.NET.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -106,7 +107,7 @@ namespace Autrage.LEX.NET.Serialization
                             (from property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                              where property.IsDefined(typeof(DataMemberAttribute))
                              where property.CanRead && property.CanWrite
-                             where !property.GetIndexParameters().Any()
+                             where property.GetIndexParameters().None()
                              let name = property.Name
                              select new { name, property })
                              .ToDictionary(e => e.name, e => e.property);
@@ -116,7 +117,7 @@ namespace Autrage.LEX.NET.Serialization
                         PropertiesByType[type] =
                             (from property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                              where property.CanRead && property.CanWrite
-                             where !property.GetIndexParameters().Any()
+                             where property.GetIndexParameters().None()
                              let name = property.Name
                              select new { name, property })
                              .ToDictionary(e => e.name, e => e.property);
