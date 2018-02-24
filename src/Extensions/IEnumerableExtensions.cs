@@ -19,5 +19,9 @@ namespace Autrage.LEX.NET.Extensions
         public static bool None<T>(this IEnumerable<T> source) => !source.Any();
 
         public static bool None<T>(this IEnumerable<T> source, Predicate<T> predicate) => source.All(e => !predicate(e));
+
+        public static bool Lacks<T>(this IEnumerable<T> source, T value) => !source.Contains(value);
+
+        public static bool Lacks<T>(this IEnumerable<T> source, T value, IEqualityComparer<T> comparer) => !source.Contains(value, comparer);
     }
 }
